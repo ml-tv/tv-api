@@ -10,6 +10,30 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/dchest/uniuri",
+			"repository": "https://github.com/dchest/uniuri",
+			"vcs": "git",
+			"revision": "8902c56451e9b58ff940bbe5fec35d5f9c04584a",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/gorilla/context",
+			"repository": "https://github.com/gorilla/context",
+			"vcs": "git",
+			"revision": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/gorilla/mux",
+			"repository": "https://github.com/gorilla/mux",
+			"vcs": "git",
+			"revision": "392c28fe23e1c45ddba891b0320b3b5df220beea",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/jmoiron/sqlx",
 			"repository": "https://github.com/jmoiron/sqlx",
 			"vcs": "git",
@@ -34,6 +58,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/satori/go.uuid",
+			"repository": "https://github.com/satori/go.uuid",
+			"vcs": "git",
+			"revision": "b061729afc07e77a8aa4fad0a2fd840958f1942a",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/sendgrid/rest",
 			"repository": "https://github.com/sendgrid/rest",
 			"vcs": "git",
@@ -47,6 +79,51 @@
 			"vcs": "git",
 			"revision": "d087004b4d47c2a378ade9eb3957571114b91493",
 			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/stretchr/testify/assert",
+			"repository": "https://github.com/stretchr/testify",
+			"vcs": "git",
+			"revision": "2402e8e7a02fc811447d11f881aa9746cdc57983",
+			"branch": "master",
+			"path": "/assert",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew",
+			"repository": "https://github.com/stretchr/testify",
+			"vcs": "git",
+			"revision": "2402e8e7a02fc811447d11f881aa9746cdc57983",
+			"branch": "master",
+			"path": "vendor/github.com/davecgh/go-spew/spew",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib",
+			"repository": "https://github.com/stretchr/testify",
+			"vcs": "git",
+			"revision": "2402e8e7a02fc811447d11f881aa9746cdc57983",
+			"branch": "master",
+			"path": "vendor/github.com/pmezard/go-difflib/difflib",
+			"notests": true
+		},
+		{
+			"importpath": "golang.org/x/crypto/bcrypt",
+			"repository": "https://go.googlesource.com/crypto",
+			"vcs": "git",
+			"revision": "b8a2a83acfe6e6770b75de42d5ff4c67596675c0",
+			"branch": "master",
+			"path": "/bcrypt",
+			"notests": true
+		},
+		{
+			"importpath": "golang.org/x/crypto/blowfish",
+			"repository": "https://go.googlesource.com/crypto",
+			"vcs": "git",
+			"revision": "b8a2a83acfe6e6770b75de42d5ff4c67596675c0",
+			"branch": "master",
+			"path": "blowfish",
 			"notests": true
 		}
 	]

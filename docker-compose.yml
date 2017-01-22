@@ -12,7 +12,7 @@ services:
       - ./config/api-common.env
       - ./config/database-common.env
       - ./config/api-${ML_BUILD_ENV}.env
-    container_name: ml_api
+    container_name: tv_api
     entrypoint: /go/src/github.com/ml-tv/tv-api/wait-for-database.sh
 
   database:
@@ -21,4 +21,4 @@ services:
       - "5432"
     env_file:
       - ./config/database-common.env
-    container_name: ml_api_postgres
+    container_name: tv_api_postgres
