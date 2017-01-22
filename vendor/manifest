@@ -1,0 +1,53 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/bsphere/le_go",
+			"repository": "https://github.com/bsphere/le_go",
+			"vcs": "git",
+			"revision": "d3308aafe090956bc89a65f0769f58251a1b4f03",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/jmoiron/sqlx",
+			"repository": "https://github.com/jmoiron/sqlx",
+			"vcs": "git",
+			"revision": "f980a91bdc37abef88269b8f122d7de6352102f5",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/kelseyhightower/envconfig",
+			"repository": "https://github.com/kelseyhightower/envconfig",
+			"vcs": "git",
+			"revision": "4069f29f08928c54bcb1fdf632b31b1bb54b4fdb",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/lib/pq",
+			"repository": "https://github.com/lib/pq",
+			"vcs": "git",
+			"revision": "67c3f2a8884c9b1aac5503c8d42ae4f73a93511c",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/sendgrid/rest",
+			"repository": "https://github.com/sendgrid/rest",
+			"vcs": "git",
+			"revision": "3ec51b4f1754e13e92409355851a0a82e9a06461",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/sendgrid/sendgrid-go",
+			"repository": "https://github.com/sendgrid/sendgrid-go",
+			"vcs": "git",
+			"revision": "d087004b4d47c2a378ade9eb3957571114b91493",
+			"branch": "master",
+			"notests": true
+		}
+	]
+}
