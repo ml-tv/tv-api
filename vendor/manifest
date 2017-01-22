@@ -26,6 +26,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/gorilla/handlers",
+			"repository": "https://github.com/gorilla/handlers",
+			"vcs": "git",
+			"revision": "3a5767ca75ece5f7f1440b1d16975247f8d8b221",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/gorilla/mux",
 			"repository": "https://github.com/gorilla/mux",
 			"vcs": "git",

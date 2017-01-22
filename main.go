@@ -1,7 +1,18 @@
 package main
 
-import "github.com/ml-tv/tv-api/src/components/api"
+import (
+	"net/http"
+
+	"github.com/gorilla/handlers"
+	"github.com/ml-tv/tv-api/src/components/api"
+)
 
 func main() {
-	api.Setup()
+	args := api.Setup()
+
+	r := api.GetRouter()
+	port := ":" + args.Port
+
+	handler := handlers.CORS(api.AllowedOrigins, api.AllowedMethods, api.AllowedHeaders)
+	http.ListenAndServe(port, handler(r))
 }
