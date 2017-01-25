@@ -5,10 +5,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/ml-tv/tv-api/src/core/network/http/httptests"
 	"github.com/ml-tv/tv-api/src/core/router"
 	"github.com/ml-tv/tv-api/src/core/tests/testhelpers"
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ml-tv/tv-api/src/core/security/auth/testdata"
@@ -30,28 +30,28 @@ func TestEndpointExecution(t *testing.T) {
 	tests := []struct {
 		description string
 		endpoint    *router.Endpoint
-		url         string
+		params      map[string]string
 		auth        *httptests.RequestAuth
 		code        int
 	}{
 		{
 			"Basic public GET",
 			&router.Endpoint{Verb: "GET", Path: "/items", Handler: hdlr},
-			"/items",
+			map[string]string{},
 			nil,
 			http.StatusNoContent,
 		},
 		{
 			"Private GET as anonymous",
 			&router.Endpoint{Verb: "GET", Path: "/items/{id}", Handler: hdlr, Auth: router.LoggedUser},
-			"/items/item-id",
+			map[string]string{"id": "item-id"},
 			nil,
 			http.StatusUnauthorized,
 		},
 		{
 			"Private GET as logged user",
 			&router.Endpoint{Verb: "GET", Path: "/items/{id}", Handler: hdlr, Auth: router.LoggedUser},
-			"/items/item-id",
+			map[string]string{"id": "item-id"},
 			httptests.NewRequestAuth(s.ID, u.ID),
 			http.StatusNoContent,
 		},
@@ -59,19 +59,19 @@ func TestEndpointExecution(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.description, func(t *testing.T) {
-			rec := execHandler(t, tc.endpoint, tc.url, tc.auth)
+			rec := execHandler(t, tc.endpoint, tc.params, tc.auth)
 			assert.Equal(t, tc.code, rec.Code)
 		})
 	}
 }
 
-func execHandler(t *testing.T, e *router.Endpoint, url string, auth *httptests.RequestAuth) *httptest.ResponseRecorder {
+func execHandler(t *testing.T, e *router.Endpoint, params map[string]string, auth *httptests.RequestAuth) *httptest.ResponseRecorder {
 	r := mux.NewRouter()
 	r.Methods(e.Verb).Path(e.Path).Handler(router.Handler(e))
 
 	ri := &httptests.RequestInfo{
 		Endpoint: e,
-		URI:      url,
+		URL:      params,
 		Router:   r,
 		Auth:     auth,
 	}

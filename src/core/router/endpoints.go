@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"reflect"
 
+	"github.com/gorilla/mux"
+	"github.com/ml-tv/tv-api/src/core/network/http/basicauth"
 	"github.com/ml-tv/tv-api/src/core/network/http/httperr"
 	"github.com/ml-tv/tv-api/src/core/security/auth"
-	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -16,15 +17,9 @@ type Endpoints []*Endpoint
 // Activate adds the endpoints to the router
 func (endpoints Endpoints) Activate(basePath string, router *mux.Router) {
 	for _, endpoint := range endpoints {
-		// Get the full path
-		fullPath := basePath + endpoint.Path
-		if endpoint.Prefix != "" {
-			fullPath = endpoint.Prefix + fullPath
-		}
-
 		router.
 			Methods(endpoint.Verb).
-			Path(fullPath).
+			Path(endpoint.Path).
 			Handler(Handler(endpoint))
 	}
 }
@@ -53,26 +48,31 @@ func Handler(e *Endpoint) http.Handler {
 		}
 
 		// We check the auth
-		session := &auth.Session{ID: req.Header.Get("X-Session-Token"), UserID: req.Header.Get("X-User-Id")}
-		if session.ID != "" && session.UserID != "" {
-			exists, err := session.Exists()
-			if err != nil {
-				request.Error(err)
-				return
-			}
-			if !exists {
-				request.Error(httperr.NewBadRequest("invalid auth data"))
-				return
-			}
-			// we get the user and make sure it (still) exists
-			request.User, err = auth.GetUser(session.UserID)
-			if err != nil {
-				request.Error(err)
-				return
-			}
-			if request.User == nil {
-				request.Error(httperr.NewBadRequest("user not found"))
-				return
+		headers, found := req.Header["Authorization"]
+		if found {
+			userID, sessionID, _ := basicauth.ParseAuthHeader(headers, "basic", "")
+			session := &auth.Session{ID: sessionID, UserID: userID}
+
+			if session.ID != "" && session.UserID != "" {
+				exists, err := session.Exists()
+				if err != nil {
+					request.Error(err)
+					return
+				}
+				if !exists {
+					request.Error(httperr.NewBadRequest("invalid auth data"))
+					return
+				}
+				// we get the user and make sure it (still) exists
+				request.User, err = auth.GetUser(session.UserID)
+				if err != nil {
+					request.Error(err)
+					return
+				}
+				if request.User == nil {
+					request.Error(httperr.NewBadRequest("user not found"))
+					return
+				}
 			}
 		}
 

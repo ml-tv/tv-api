@@ -2,13 +2,17 @@ package httptests
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/ml-tv/tv-api/src/core/router"
+	"strings"
+
 	"github.com/gorilla/mux"
+	"github.com/ml-tv/tv-api/src/core/router"
 )
 
 // RequestAuth represents the auth data for a request
@@ -17,7 +21,14 @@ type RequestAuth struct {
 	UserID    string
 }
 
-// NewRequestAuth creates new request auth
+// ToBasicAuth returns the data using the basic auth format
+func (ra *RequestAuth) ToBasicAuth() string {
+	authValue := fmt.Sprintf("%s:%s", ra.UserID, ra.SessionID)
+
+	encoded := base64.StdEncoding.EncodeToString([]byte(authValue))
+	return "basic " + encoded
+}
+
 func NewRequestAuth(sessionID string, userID string) *RequestAuth {
 	return &RequestAuth{
 		SessionID: sessionID,
@@ -28,8 +39,8 @@ func NewRequestAuth(sessionID string, userID string) *RequestAuth {
 // RequestInfo represents the params accepted by NewRequest
 type RequestInfo struct {
 	Endpoint *router.Endpoint
-	URI      string       // Optional
-	Params   interface{}  // Optional
+	Body     interface{} // Optional
+	URL      map[string]string
 	Auth     *RequestAuth // Optional
 
 	// Router is used to parse Mux Variables. Default on the api router
@@ -38,25 +49,31 @@ type RequestInfo struct {
 
 // NewRequest simulates a new http request executed against the api
 func NewRequest(t *testing.T, info *RequestInfo) *httptest.ResponseRecorder {
-	params := bytes.NewBufferString("")
+	body := bytes.NewBufferString("")
 
-	if info.Params != nil {
-		jsonDump, err := json.Marshal(info.Params)
+	// Parse the body as a JSON object
+	if info.Body != nil {
+		jsonDump, err := json.Marshal(info.Body)
 		if err != nil {
 			t.Fatalf("could not create request %s", err)
 		}
 
-		params = bytes.NewBuffer(jsonDump)
+		body = bytes.NewBuffer(jsonDump)
 	}
 
-	req, err := http.NewRequest(info.Endpoint.Verb, info.URI, params)
+	// Parse the URL
+	url := info.Endpoint.Path
+	for param, value := range info.URL {
+		url = strings.Replace(url, "{"+param+"}", value, -1)
+	}
+
+	req, err := http.NewRequest(info.Endpoint.Verb, url, body)
 	if err != nil {
 		t.Fatalf("could not execute request %s", err)
 	}
 
 	if info.Auth != nil {
-		req.Header.Add("X-Session-Token", info.Auth.SessionID)
-		req.Header.Add("X-User-Id", info.Auth.UserID)
+		req.Header.Add("Authorization", info.Auth.ToBasicAuth())
 	}
 
 	req.Header.Add("Content-Type", "application/json; charset=utf-8")
