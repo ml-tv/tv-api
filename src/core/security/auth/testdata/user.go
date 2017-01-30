@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ml-tv/tv-api/src/core/security/auth"
-	"github.com/ml-tv/tv-api/src/core/tests/testhelpers"
 	"github.com/dchest/uniuri"
+	"github.com/ml-tv/tv-api/src/core/primitives/models/lifecycle"
+	"github.com/ml-tv/tv-api/src/core/security/auth"
 )
 
 // NewUser creates a new user with "fake" as password
@@ -35,6 +35,6 @@ func NewUser(t *testing.T, u *auth.User) *auth.User {
 		t.Fatalf("failed to create user: %s", err)
 	}
 
-	testhelpers.SaveModels(t, u)
+	lifecycle.SaveModels(t, u)
 	return u
 }

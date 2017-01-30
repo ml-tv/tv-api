@@ -15,7 +15,7 @@ import (
 type Endpoints []*Endpoint
 
 // Activate adds the endpoints to the router
-func (endpoints Endpoints) Activate(basePath string, router *mux.Router) {
+func (endpoints Endpoints) Activate(router *mux.Router) {
 	for _, endpoint := range endpoints {
 		router.
 			Methods(endpoint.Verb).

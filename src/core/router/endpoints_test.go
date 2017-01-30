@@ -7,8 +7,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/ml-tv/tv-api/src/core/network/http/httptests"
+	"github.com/ml-tv/tv-api/src/core/primitives/models/lifecycle"
 	"github.com/ml-tv/tv-api/src/core/router"
-	"github.com/ml-tv/tv-api/src/core/tests/testhelpers"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ml-tv/tv-api/src/core/security/auth/testdata"
@@ -25,33 +25,37 @@ func TestEndpointExecution(t *testing.T) {
 	}
 
 	u, s := testdata.NewAuth(t)
-	defer testhelpers.PurgeModels(t)
+	defer lifecycle.PurgeModels(t)
 
 	tests := []struct {
 		description string
 		endpoint    *router.Endpoint
-		params      map[string]string
+		params      interface{}
 		auth        *httptests.RequestAuth
 		code        int
 	}{
 		{
 			"Basic public GET",
 			&router.Endpoint{Verb: "GET", Path: "/items", Handler: hdlr},
-			map[string]string{},
+			struct{}{},
 			nil,
 			http.StatusNoContent,
 		},
 		{
 			"Private GET as anonymous",
 			&router.Endpoint{Verb: "GET", Path: "/items/{id}", Handler: hdlr, Auth: router.LoggedUser},
-			map[string]string{"id": "item-id"},
+			struct {
+				ID string `json:"id"`
+			}{ID: "item-id"},
 			nil,
 			http.StatusUnauthorized,
 		},
 		{
 			"Private GET as logged user",
 			&router.Endpoint{Verb: "GET", Path: "/items/{id}", Handler: hdlr, Auth: router.LoggedUser},
-			map[string]string{"id": "item-id"},
+			struct {
+				ID string `json:"id"`
+			}{ID: "item-id"},
 			httptests.NewRequestAuth(s.ID, u.ID),
 			http.StatusNoContent,
 		},
@@ -65,13 +69,13 @@ func TestEndpointExecution(t *testing.T) {
 	}
 }
 
-func execHandler(t *testing.T, e *router.Endpoint, params map[string]string, auth *httptests.RequestAuth) *httptest.ResponseRecorder {
+func execHandler(t *testing.T, e *router.Endpoint, params interface{}, auth *httptests.RequestAuth) *httptest.ResponseRecorder {
 	r := mux.NewRouter()
 	r.Methods(e.Verb).Path(e.Path).Handler(router.Handler(e))
 
 	ri := &httptests.RequestInfo{
 		Endpoint: e,
-		URL:      params,
+		Params:   params,
 		Router:   r,
 		Auth:     auth,
 	}

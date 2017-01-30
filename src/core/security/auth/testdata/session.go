@@ -3,8 +3,8 @@ package testdata
 import (
 	"testing"
 
+	"github.com/ml-tv/tv-api/src/core/primitives/models/lifecycle"
 	"github.com/ml-tv/tv-api/src/core/security/auth"
-	"github.com/ml-tv/tv-api/src/core/tests/testhelpers"
 )
 
 // NewAuth creates a new user and their session
@@ -18,6 +18,6 @@ func NewAuth(t *testing.T) (*auth.User, *auth.Session) {
 		t.Fatal(err)
 	}
 
-	testhelpers.SaveModels(t, session)
+	lifecycle.SaveModels(t, session)
 	return user, session
 }

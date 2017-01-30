@@ -1,14 +1,11 @@
-package testhelpers
+package lifecycle
 
 import (
 	"sync"
 	"testing"
-)
 
-// FullyDeletable represents an objects that can be deleted from the database
-type FullyDeletable interface {
-	FullyDelete() error
-}
+	"github.com/ml-tv/tv-api/src/core/primitives/models"
+)
 
 var _models = &savedModels{
 	list: make(map[testing.TB]map[interface{}]bool),
@@ -22,7 +19,7 @@ type savedModels struct {
 }
 
 // Push adds a new model to the list
-func (sm *savedModels) Push(t testing.TB, obj FullyDeletable) {
+func (sm *savedModels) Push(t testing.TB, obj models.FullyDeletable) {
 	_models.Lock()
 	defer _models.Unlock()
 
@@ -44,7 +41,7 @@ func (sm *savedModels) Purge(t testing.TB) {
 	}
 
 	for obj := range list {
-		deletable, ok := obj.(FullyDeletable)
+		deletable, ok := obj.(models.FullyDeletable)
 		if !ok {
 			t.Fatalf("could not delete saved object")
 		}
@@ -58,7 +55,7 @@ func (sm *savedModels) Purge(t testing.TB) {
 }
 
 // SaveModels saves a list of models that can be purged using PurgeModels()
-func SaveModels(t testing.TB, models ...FullyDeletable) {
+func SaveModels(t testing.TB, models ...models.FullyDeletable) {
 	for _, model := range models {
 		_models.Push(t, model)
 	}

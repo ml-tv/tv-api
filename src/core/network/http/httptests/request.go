@@ -7,11 +7,14 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
+	"strconv"
 	"testing"
 
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/ml-tv/tv-api/src/components/api"
 	"github.com/ml-tv/tv-api/src/core/router"
 )
 
@@ -29,6 +32,7 @@ func (ra *RequestAuth) ToBasicAuth() string {
 	return "basic " + encoded
 }
 
+// NewRequestAuth creates a new
 func NewRequestAuth(sessionID string, userID string) *RequestAuth {
 	return &RequestAuth{
 		SessionID: sessionID,
@@ -39,35 +43,113 @@ func NewRequestAuth(sessionID string, userID string) *RequestAuth {
 // RequestInfo represents the params accepted by NewRequest
 type RequestInfo struct {
 	Endpoint *router.Endpoint
-	Body     interface{} // Optional
-	URL      map[string]string
-	Auth     *RequestAuth // Optional
 
+	Params interface{}  // Optional
+	Auth   *RequestAuth // Optional
 	// Router is used to parse Mux Variables. Default on the api router
 	Router *mux.Router
+
+	urlParams   map[string]string
+	bodyParams  map[string]string
+	queryParams map[string]string
 }
 
-// NewRequest simulates a new http request executed against the api
-func NewRequest(t *testing.T, info *RequestInfo) *httptest.ResponseRecorder {
+// ParseParams parses the params and copy them in the right list:
+// urlParams, bodyParams, and queryParams
+func (ri *RequestInfo) ParseParams() {
+	ri.urlParams = map[string]string{}
+	ri.bodyParams = map[string]string{}
+	ri.queryParams = map[string]string{}
+
+	if ri.Params == nil {
+		return
+	}
+
+	params := reflect.ValueOf(ri.Params)
+	if params.Kind() == reflect.Ptr {
+		params = params.Elem()
+	}
+
+	nbParams := params.NumField()
+	for i := 0; i < nbParams; i++ {
+		param := params.Field(i)
+		paramInfo := params.Type().Field(i)
+		tags := paramInfo.Tag
+
+		if param.Kind() == reflect.Ptr {
+			param = param.Elem()
+		}
+
+		// We get the Value
+		value := ""
+		switch param.Kind() {
+		case reflect.Bool:
+			value = strconv.FormatBool(param.Bool())
+		case reflect.String:
+			value = param.String()
+		case reflect.Int:
+			value = strconv.Itoa(int(param.Int()))
+		}
+
+		// We get the name from the json tag
+		fieldName := ""
+		jsonOpts := strings.Split(tags.Get("json"), ",")
+		if len(jsonOpts) > 0 {
+			if jsonOpts[0] == "-" {
+				continue
+			}
+			fieldName = jsonOpts[0]
+		}
+
+		switch strings.ToLower(tags.Get("from")) {
+		case "url":
+			ri.urlParams[fieldName] = value
+		case "form":
+			ri.bodyParams[fieldName] = value
+		case "query":
+			ri.queryParams[fieldName] = value
+		}
+	}
+}
+
+// URL returns the full URL
+func (ri *RequestInfo) URL() string {
+	url := ri.Endpoint.Path
+	for param, value := range ri.urlParams {
+		url = strings.Replace(url, "{"+param+"}", value, -1)
+	}
+
+	return url
+}
+
+// Body returns the full Body of the request
+func (ri *RequestInfo) Body() (*bytes.Buffer, error) {
 	body := bytes.NewBufferString("")
 
 	// Parse the body as a JSON object
-	if info.Body != nil {
-		jsonDump, err := json.Marshal(info.Body)
+	if len(ri.bodyParams) > 0 {
+		jsonDump, err := json.Marshal(ri.bodyParams)
 		if err != nil {
-			t.Fatalf("could not create request %s", err)
+			return nil, err
 		}
 
 		body = bytes.NewBuffer(jsonDump)
 	}
 
-	// Parse the URL
-	url := info.Endpoint.Path
-	for param, value := range info.URL {
-		url = strings.Replace(url, "{"+param+"}", value, -1)
+	return body, nil
+}
+
+// NewRequest simulates a new http request executed against the api
+func NewRequest(t *testing.T, info *RequestInfo) *httptest.ResponseRecorder {
+	info.ParseParams()
+
+	// Parse the body as a JSON object
+	body, err := info.Body()
+	if err != nil {
+		t.Fatalf("could not create request: %s", err)
 	}
 
-	req, err := http.NewRequest(info.Endpoint.Verb, url, body)
+	req, err := http.NewRequest(info.Endpoint.Verb, info.URL(), body)
 	if err != nil {
 		t.Fatalf("could not execute request %s", err)
 	}
@@ -80,7 +162,7 @@ func NewRequest(t *testing.T, info *RequestInfo) *httptest.ResponseRecorder {
 
 	// If no router is provided we assume that we want to execute a regular endpoint
 	if info.Router == nil {
-		info.Router = router.CurrentRouter
+		info.Router = api.GetRouter()
 	}
 
 	rec := httptest.NewRecorder()
