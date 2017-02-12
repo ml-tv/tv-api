@@ -90,6 +90,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/serenize/snaker",
+			"repository": "https://github.com/serenize/snaker",
+			"vcs": "git",
+			"revision": "543781d2b79bd95c51ffe70e70a55c946ca211ff",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/stretchr/testify/assert",
 			"repository": "https://github.com/stretchr/testify",
 			"vcs": "git",
@@ -123,6 +131,14 @@
 			"revision": "2402e8e7a02fc811447d11f881aa9746cdc57983",
 			"branch": "master",
 			"path": "vendor/github.com/pmezard/go-difflib/difflib",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/urfave/cli",
+			"repository": "https://github.com/urfave/cli",
+			"vcs": "git",
+			"revision": "347a9884a87374d000eec7e6445a34487c1f4a2b",
+			"branch": "master",
 			"notests": true
 		},
 		{
