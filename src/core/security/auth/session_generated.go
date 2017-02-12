@@ -1,24 +1,35 @@
 package auth
 
-// Code auto-generated; DO NOT EDIT\n
+// Code auto-generated; DO NOT EDIT
 
 import (
 	"errors"
+	
 
 	"github.com/ml-tv/tv-api/src/core/network/http/httperr"
 	"github.com/ml-tv/tv-api/src/core/storage/db"
 	uuid "github.com/satori/go.uuid"
 )
 
+
+
+
+
+
+
 // Save creates or updates the session depending on the value of the id
 func (s *Session) Save() error {
 	return s.SaveQ(db.Writer)
 }
 
+
+
 // Create persists a session in the database
 func (s *Session) Create() error {
 	return s.CreateQ(db.Writer)
 }
+
+
 
 // doCreate persists a session in the database using a Node
 func (s *Session) doCreate(q db.Queryable) error {
@@ -33,8 +44,14 @@ func (s *Session) doCreate(q db.Queryable) error {
 	stmt := "INSERT INTO sessions (id, created_at, updated_at, deleted_at, user_id) VALUES (:id, :created_at, :updated_at, :deleted_at, :user_id)"
 	_, err := q.NamedExec(stmt, s)
 
-	return err
+  return err
 }
+
+
+
+
+
+
 
 // FullyDelete removes a session from the database
 func (s *Session) FullyDelete() error {

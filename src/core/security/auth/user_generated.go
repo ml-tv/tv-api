@@ -1,16 +1,21 @@
 package auth
 
-// Code auto-generated; DO NOT EDIT\n
+// Code auto-generated; DO NOT EDIT
 
 import (
 	"errors"
+	
 
 	"github.com/ml-tv/tv-api/src/core/network/http/httperr"
 	"github.com/ml-tv/tv-api/src/core/storage/db"
 	uuid "github.com/satori/go.uuid"
 )
 
-// Exists checks if  user by ID
+
+
+
+
+// Exists checks if a user exists for a specific ID
 func Exists(id string) (bool, error) {
 	exists := false
 	stmt := "SELECT exists(SELECT 1 FROM users WHERE id=$1 and deleted_at IS NULL)"
@@ -42,6 +47,8 @@ func (u *User) Create() error {
 	return u.CreateQ(db.Writer)
 }
 
+
+
 // doCreate persists a user in the database using a Node
 func (u *User) doCreate(q db.Queryable) error {
 	if u == nil {
@@ -52,10 +59,10 @@ func (u *User) doCreate(q db.Queryable) error {
 	u.CreatedAt = db.Now()
 	u.UpdatedAt = db.Now()
 
-	stmt := "INSERT INTO users (id, created_at, updated_at, deleted_at, name, email, password) VALUES (:id, :created_at, :updated_at, :deleted_at, :name, :email, :password)"
+	stmt := "INSERT INTO users (id, created_at, updated_at, deleted_at, name, email, password, is_admin) VALUES (:id, :created_at, :updated_at, :deleted_at, :name, :email, :password, :is_admin)"
 	_, err := q.NamedExec(stmt, u)
 
-	return err
+  return err
 }
 
 // Update updates most of the fields of a persisted user.
@@ -63,6 +70,8 @@ func (u *User) doCreate(q db.Queryable) error {
 func (u *User) Update() error {
 	return u.UpdateQ(db.Writer)
 }
+
+
 
 // doUpdate updates a user in the database using an optional transaction
 func (u *User) doUpdate(q db.Queryable) error {
@@ -76,7 +85,7 @@ func (u *User) doUpdate(q db.Queryable) error {
 
 	u.UpdatedAt = db.Now()
 
-	stmt := "UPDATE users SET id=:id, created_at=:created_at, updated_at=:updated_at, deleted_at=:deleted_at, name=:name, email=:email, password=:password WHERE id=:id"
+	stmt := "UPDATE users SET id=:id, created_at=:created_at, updated_at=:updated_at, deleted_at=:deleted_at, name=:name, email=:email, password=:password, is_admin=:is_admin WHERE id=:id"
 	_, err := q.NamedExec(stmt, u)
 
 	return err

@@ -8,7 +8,7 @@ import (
 )
 
 // Session is a structure representing a session that can be saved in the database
-//go:generate tv-api-cli generate model Session -t sessions -e SaveQ,CreateQ,Update,UpdateQ,doUpdate,JoinSQL,Get
+//go:generate tv-api-cli generate model Session -t sessions -e SaveQ,CreateQ,Update,UpdateQ,doUpdate,JoinSQL,Get,Exists
 type Session struct {
 	ID        string   `db:"id"`
 	CreatedAt *db.Time `db:"created_at"`
