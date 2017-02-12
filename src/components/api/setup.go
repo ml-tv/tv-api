@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/bsphere/le_go"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/ml-tv/tv-api/src/components/medias/services/tmdb"
 	"github.com/ml-tv/tv-api/src/core/logger"
 	"github.com/ml-tv/tv-api/src/core/notifiers/mailer"
 	"github.com/ml-tv/tv-api/src/core/storage/db"
@@ -12,6 +13,7 @@ import (
 type Args struct {
 	Port            string `default:"5000"`
 	PostgresURI     string `required:"true" envconfig:"postgres_uri"`
+	TMDbAPIKey      string `envconfig:"tmdb_api_key"`
 	LogEntriesToken string `envconfig:"logentries_token"`
 	EmailAPIKey     string `envconfig:"email_api_key"`
 	EmailFrom       string `envconfig:"email_default_from"`
@@ -43,6 +45,9 @@ func Setup() *Args {
 	if params.EmailAPIKey != "" {
 		mailer.Emailer = mailer.NewMailer(params.EmailAPIKey, params.EmailFrom, params.EmailTo)
 	}
+
+	// TMDb
+	tmdb.APIKey = params.TMDbAPIKey
 
 	return &params
 }
