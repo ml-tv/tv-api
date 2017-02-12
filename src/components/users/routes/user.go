@@ -25,14 +25,14 @@ var UserEndpoints = router.Endpoints{
 	EndpointUpdateUser: {
 		Verb:    "PATCH",
 		Path:    "/users/{id}",
-		Auth:    router.LoggedUser,
+		Auth:    router.LoggedUserAccess,
 		Handler: handlers.UpdateUser,
 		Params:  &handlers.UpdateUserParams{},
 	},
 	EndpointDeleteUser: {
 		Verb:    "DELETE",
 		Path:    "/users/{id}",
-		Auth:    router.LoggedUser,
+		Auth:    router.LoggedUserAccess,
 		Handler: handlers.DeleteUser,
 		Params:  &handlers.DeleteUserParams{},
 	},

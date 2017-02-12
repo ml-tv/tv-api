@@ -43,7 +43,7 @@ func TestEndpointExecution(t *testing.T) {
 		},
 		{
 			"Private GET as anonymous",
-			&router.Endpoint{Verb: "GET", Path: "/items/{id}", Handler: hdlr, Auth: router.LoggedUser},
+			&router.Endpoint{Verb: "GET", Path: "/items/{id}", Handler: hdlr, Auth: router.LoggedUserAccess},
 			struct {
 				ID string `json:"id"`
 			}{ID: "item-id"},
@@ -52,7 +52,7 @@ func TestEndpointExecution(t *testing.T) {
 		},
 		{
 			"Private GET as logged user",
-			&router.Endpoint{Verb: "GET", Path: "/items/{id}", Handler: hdlr, Auth: router.LoggedUser},
+			&router.Endpoint{Verb: "GET", Path: "/items/{id}", Handler: hdlr, Auth: router.LoggedUserAccess},
 			struct {
 				ID string `json:"id"`
 			}{ID: "item-id"},

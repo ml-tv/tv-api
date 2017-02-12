@@ -20,6 +20,7 @@ type User struct {
 	Name     string `db:"name"`
 	Email    string `db:"email"`
 	Password string `db:"password"`
+	IsAdmin  bool   `db:"is_admin"`
 }
 
 // UserJoinSQL returns a string ready to be embed in a JOIN query
