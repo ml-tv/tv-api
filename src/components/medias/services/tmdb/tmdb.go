@@ -9,16 +9,16 @@ import (
 	"net/url"
 )
 
-// APIKey is the TMDB API key that will be used to query the TMDB API
+// APIKey is the TMDb API key that will be used to query the TMDb API
 var APIKey string
 
 const rootURL = "https://api.themoviedb.org/3"
 
 var (
-	// ErrNotFound is an error returned when TMDB cannot find a resource
+	// ErrNotFound is an error returned when TMDb cannot find a resource
 	ErrNotFound = errors.New("resource not found")
 
-	// ErrInvalidKey is an error returned when TMDB cannot validate the API key
+	// ErrInvalidKey is an error returned when TMDb cannot validate the API key
 	ErrInvalidKey = errors.New("invalid API key")
 )
 
@@ -27,7 +27,7 @@ type apiError struct {
 	StatusMessage string `json:"status_message"`
 }
 
-// Get is used to trigger a GET request against the TMDB API
+// Get is used to trigger a GET request against the TMDb API
 func Get(endpoint string, dest interface{}) error {
 	// Setup the URl
 	e, err := url.Parse(endpoint)
