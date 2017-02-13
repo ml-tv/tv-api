@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/ml-tv/tv-api/src/components/medias"
 	"github.com/ml-tv/tv-api/src/components/sessions"
 	"github.com/ml-tv/tv-api/src/components/users"
 	"github.com/ml-tv/tv-api/src/core/network/http/httpres"
@@ -22,6 +23,7 @@ func GetRouter() *mux.Router {
 	r := mux.NewRouter()
 	users.SetRoutes(r)
 	sessions.SetRoutes(r)
+	medias.SetRoutes(r)
 	// blog.SetRoutes(baseURI, r)
 	// sessions.SetRoutes(baseURI, r)
 	r.NotFoundHandler = http.HandlerFunc(notFound)
