@@ -15,8 +15,8 @@ import (
 
 
 
-// Exists checks if a user exists for a specific ID
-func Exists(id string) (bool, error) {
+// UserExists checks if a user exists for a specific ID
+func UserExists(id string) (bool, error) {
 	exists := false
 	stmt := "SELECT exists(SELECT 1 FROM users WHERE id=$1 and deleted_at IS NULL)"
 	err := db.Writer.Get(&exists, stmt, id)

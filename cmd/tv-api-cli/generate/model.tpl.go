@@ -16,8 +16,8 @@ import (
 )
 
 {{ if .Generate "JoinSQL" -}}
-// JoinSQL returns a string ready to be embed in a JOIN query
-func JoinSQL(prefix string) string {
+// Join{{.ModelName}}SQL returns a string ready to be embed in a JOIN query
+func Join{{.ModelName}}SQL(prefix string) string {
 	fields := []string{ {{.FieldsAsArray}} }
 	output := ""
 
@@ -35,8 +35,8 @@ func JoinSQL(prefix string) string {
 {{- end }}
 
 {{ if .Generate "Get" -}}
-// Get finds and returns an active {{.ModelNameLC}} by ID
-func Get(id string) (*{{.ModelName}}, error) {
+// Get{{.ModelName}} finds and returns an active {{.ModelNameLC}} by ID
+func Get{{.ModelName}}(id string) (*{{.ModelName}}, error) {
 	{{.ModelVar}} := &{{.ModelName}}{}
 	stmt := "SELECT * from {{.TableName}} WHERE id=$1 and deleted_at IS NULL LIMIT 1"
 	err := db.Get({{.ModelVar}}, stmt, id)
@@ -49,8 +49,8 @@ func Get(id string) (*{{.ModelName}}, error) {
 {{- end }}
 
 {{ if .Generate "Exists" -}}
-// Exists checks if a {{.ModelNameLC}} exists for a specific ID
-func Exists(id string) (bool, error) {
+// {{.ModelName}}Exists checks if a {{.ModelNameLC}} exists for a specific ID
+func {{.ModelName}}Exists(id string) (bool, error) {
 	exists := false
 	stmt := "SELECT exists(SELECT 1 FROM {{.TableName}} WHERE id=$1 and deleted_at IS NULL)"
 	err := db.Writer.Get(&exists, stmt, id)
