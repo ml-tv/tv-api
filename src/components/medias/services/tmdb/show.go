@@ -4,6 +4,12 @@ import "fmt"
 
 const rootShowURL = rootURL + "/tv"
 
+var (
+	StatusReturning = "Returning Series"
+	StatusEnded     = "Ended"
+	StatusCanceled  = "Canceled"
+)
+
 // Show represents a TMDb payload representing a TV Show
 type Show struct {
 	ID           int    `json:"id"`
@@ -12,6 +18,10 @@ type Show struct {
 	BackdropPath string `json:"backdrop_path"`
 	PosterPath   string `json:"poster_path"`
 	Overview     string `json:"overview"`
+	InProduction bool   `json:"in_production"`
+	Status       string `json:"status"`
+	Website      string `json:"homepage"`
+	LastAirDate  string `json:"last_air_date"`
 }
 
 // ShowByID returns a show using an ID

@@ -12,6 +12,9 @@ import (
 // APIKey is the TMDb API key that will be used to query the TMDb API
 var APIKey string
 
+// DateFormat represents the format of the date returned by TMDb
+const DateFormat = "2006-01-02"
+
 const rootURL = "https://api.themoviedb.org/3"
 
 var (
