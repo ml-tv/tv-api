@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/bsphere/le_go"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/ml-tv/tv-api/src/components/medias/services/tmdb"
+	"github.com/ml-tv/tv-api/src/services/tmdb"
 	"github.com/ml-tv/tv-api/src/core/logger"
 	"github.com/ml-tv/tv-api/src/core/notifiers/mailer"
 	"github.com/ml-tv/tv-api/src/core/storage/db"

@@ -3,7 +3,7 @@ package tmdb_test
 import (
 	"testing"
 
-	"github.com/ml-tv/tv-api/src/components/medias/services/tmdb"
+	"github.com/ml-tv/tv-api/src/services/tmdb"
 	"github.com/stretchr/testify/assert"
 )
 

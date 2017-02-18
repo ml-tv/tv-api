@@ -1,12 +1,12 @@
-package models
+package shows
 
 import (
 	"fmt"
 
 	"time"
 
-	"github.com/ml-tv/tv-api/src/components/medias/services/tmdb"
 	"github.com/ml-tv/tv-api/src/core/storage/db"
+	"github.com/ml-tv/tv-api/src/services/tmdb"
 )
 
 const (
@@ -48,8 +48,8 @@ func (m *Show) PosterURL() string {
 	return fmt.Sprintf("https://image.tmdb.org/t/p/original/%s", m.PosterPath)
 }
 
-// NewShowFromTMDb turns a tmdb.Show int a Show
-func NewShowFromTMDb(show *tmdb.Show) *Show {
+// NewFromTMDb turns a TMDb.Show int a Show
+func NewFromTMDb(show *tmdb.Show) *Show {
 	s := &Show{
 		TMDbID:       show.ID,
 		Name:         show.Name,

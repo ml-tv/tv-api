@@ -16,3 +16,10 @@ docker-compose up -d
 ```
 
 Bash helpers can be found in `tools/docker-helpers.sh`
+
+## travis
+
+```
+travis encrypt HEROKU_API_KEY=$(heroku auth:token) --add
+travis encrypt TMDB_API_KEY=xxxxxxxxxxxxxxxxxx --add
+```

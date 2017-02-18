@@ -1,26 +1,25 @@
-package handlers_test
+package shows_test
 
 import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/ml-tv/tv-api/src/components/medias/handlers"
-	"github.com/ml-tv/tv-api/src/components/medias/routes"
 	"github.com/ml-tv/tv-api/src/core/network/http/httptests"
 	"github.com/stretchr/testify/assert"
 
 	"net/http"
 
-	"github.com/ml-tv/tv-api/src/components/medias/testdata"
+	"github.com/ml-tv/tv-api/src/components/shows"
+	"github.com/ml-tv/tv-api/src/components/shows/testdata"
 	"github.com/ml-tv/tv-api/src/core/primitives/models/lifecycle"
 	authdata "github.com/ml-tv/tv-api/src/core/security/auth/testdata"
 )
 
 const theLyingGame = 38207
 
-func callAddShow(t *testing.T, params *handlers.AddShowParams, auth *httptests.RequestAuth) *httptest.ResponseRecorder {
+func callAdd(t *testing.T, params *shows.AddParams, auth *httptests.RequestAuth) *httptest.ResponseRecorder {
 	ri := &httptests.RequestInfo{
-		Endpoint: routes.ShowEndpoints[routes.EndpointAddShow],
+		Endpoint: shows.Endpoints[shows.EndpointAdd],
 		Params:   params,
 		Auth:     auth,
 	}
@@ -37,9 +36,9 @@ func TestAddShowDuplicate(t *testing.T) {
 	s := testdata.NewShow(t, theLyingGame)
 
 	// Try to add the same show again
-	params := &handlers.AddShowParams{TMDbID: s.TMDbID}
+	params := &shows.AddParams{TMDbID: s.TMDbID}
 	auth := httptests.NewRequestAuth(adminSession.ID, admin.ID)
-	rec := callAddShow(t, params, auth)
+	rec := callAdd(t, params, auth)
 	assert.Equal(t, http.StatusConflict, rec.Code)
 }
 
@@ -55,25 +54,25 @@ func TestAddShowInvalid(t *testing.T) {
 		testCases := []struct {
 			description string
 			code        int
-			params      *handlers.AddShowParams
+			params      *shows.AddParams
 			auth        *httptests.RequestAuth
 		}{
 			{
 				"User not logged",
 				http.StatusUnauthorized,
-				&handlers.AddShowParams{TMDbID: 0},
+				&shows.AddParams{TMDbID: 0},
 				nil,
 			},
 			{
 				"User not admin",
 				http.StatusUnauthorized,
-				&handlers.AddShowParams{TMDbID: 0},
+				&shows.AddParams{TMDbID: 0},
 				httptests.NewRequestAuth(userSession.ID, user.ID),
 			},
 			{
 				"Show does not exists",
 				http.StatusNotFound,
-				&handlers.AddShowParams{TMDbID: 0},
+				&shows.AddParams{TMDbID: 0},
 				httptests.NewRequestAuth(adminSession.ID, admin.ID),
 			},
 		}
@@ -82,7 +81,7 @@ func TestAddShowInvalid(t *testing.T) {
 			tc := tc
 			t.Run(tc.description, func(t *testing.T) {
 				t.Parallel()
-				rec := callAddShow(t, tc.params, tc.auth)
+				rec := callAdd(t, tc.params, tc.auth)
 				assert.Equal(t, tc.code, rec.Code)
 			})
 		}

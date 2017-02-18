@@ -1,12 +1,11 @@
-package payloads
+package shows
 
 import (
-	"github.com/ml-tv/tv-api/src/components/medias/models"
 	"github.com/ml-tv/tv-api/src/core/storage/db"
 )
 
-// Show represents a TV Show returnable to the clients
-type Show struct {
+// Payload represents a TV Show returnable to the clients
+type Payload struct {
 	ID            string   `json:"id"`
 	Name          string   `json:"name"`
 	OriginalName  string   `json:"original_name"`
@@ -22,9 +21,9 @@ type Show struct {
 	OnNetflix     bool     `json:"on_netflix"`
 }
 
-// NewShow turn a Show model into a payload
-func NewShow(m *models.Show) *Show {
-	return &Show{
+// NewPayload turn a Show model into a payload
+func NewPayload(m *Show) *Payload {
+	return &Payload{
 		ID:            m.ID,
 		Name:          m.Name,
 		OriginalName:  m.OriginalName,
