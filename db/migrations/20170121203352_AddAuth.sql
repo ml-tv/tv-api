@@ -7,9 +7,9 @@ CREATE TABLE users (
   created_at timestamptz NOT NULL,
   updated_at timestamptz NOT NULL,
   deleted_at timestamptz,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  name VARCHAR(255) NOT NULL,
-  password VARCHAR(255) NOT NULL,
+  email VARCHAR NOT NULL UNIQUE CHECK (length(email) < 255),
+  name VARCHAR NOT NULL CHECK (length(name) < 255),
+  password VARCHAR NOT NULL CHECK (length(password) < 255),
   PRIMARY KEY (id)
 );
 
