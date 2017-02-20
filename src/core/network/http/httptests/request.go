@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"reflect"
 	"strconv"
 	"testing"
@@ -122,6 +123,13 @@ func (ri *RequestInfo) URL() string {
 	return url
 }
 
+// PopulateQuery populate the query string of a request
+func (ri *RequestInfo) PopulateQuery(qs *url.Values) {
+	for key, value := range ri.queryParams {
+		qs.Add(key, value)
+	}
+}
+
 // Body returns the full Body of the request
 func (ri *RequestInfo) Body() (*bytes.Buffer, error) {
 	body := bytes.NewBufferString("")
@@ -153,6 +161,11 @@ func NewRequest(t *testing.T, info *RequestInfo) *httptest.ResponseRecorder {
 	if err != nil {
 		t.Fatalf("could not execute request %s", err)
 	}
+
+	// Attach the query string
+	qs := req.URL.Query()
+	info.PopulateQuery(&qs)
+	req.URL.RawQuery = qs.Encode()
 
 	if info.Auth != nil {
 		req.Header.Add("Authorization", info.Auth.ToBasicAuth())
