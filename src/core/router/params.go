@@ -119,10 +119,6 @@ func (r *Request) ParseParams() error {
 		paramInfo := params.Type().Field(i)
 		tags := paramInfo.Tag
 
-		if param.Kind() == reflect.Ptr {
-			param = param.Elem()
-		}
-
 		// We make sure we can update the value of field
 		if !param.CanSet() {
 			return httperr.NewServerError("field [%s] could not be set", paramInfo.Name)
@@ -203,6 +199,27 @@ func (r *Request) setParamValue(args *setParamValueArgs) error {
 				return httperr.NewBadRequest(errorMsg)
 			}
 			args.param.SetInt(v)
+		case reflect.Ptr:
+			val := reflect.New(args.param.Type().Elem())
+			args.param.Set(val)
+
+			switch args.param.Elem().Kind() {
+			case reflect.Int:
+				v64, err := strconv.ParseInt(value, 10, 64)
+				if err != nil {
+					return httperr.NewBadRequest(errorMsg)
+				}
+				v := int(v64)
+				args.param.Set(reflect.ValueOf(&v))
+			case reflect.Bool:
+				v, err := strconv.ParseBool(value)
+				if err != nil {
+					return httperr.NewBadRequest(errorMsg)
+				}
+				args.param.Set(reflect.ValueOf(&v))
+			case reflect.String:
+				args.param.Set(reflect.ValueOf(&value))
+			}
 		}
 	}
 	return nil
