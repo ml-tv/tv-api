@@ -18,18 +18,18 @@ const (
 var Endpoints = router.Endpoints{
 	EndpointAdd: {
 		Verb:    "POST",
-		Path:    "/medias/shows",
+		Path:    "/shows",
 		Auth:    router.AdminAccess,
 		Handler: Add,
 		Params:  &AddParams{},
 	},
-	// EndpointSearch: {
-	// 	Verb:    "GET",
-	// 	Path:    "/medias/shows",
-	// 	Auth:    nil,
-	// 	Handler: handlers.Search,
-	// 	Params:  &handlers.SearchParams{},
-	// },
+	EndpointSearch: {
+		Verb:    "GET",
+		Path:    "/shows",
+		Auth:    nil,
+		Handler: Search,
+		Params:  &SearchParams{},
+	},
 	// EndpointUpdate: {
 	// 	Verb:    "PATCH",
 	// 	Path:    "/medias/shows/{id}",

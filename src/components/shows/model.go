@@ -14,6 +14,9 @@ const (
 	ShowStatusPaused
 	ShowStatusFinished
 	ShowStatusCanceled
+
+	// ShowStatusEndOfList represent the total number of possible status
+	ShowStatusEndOfList
 )
 
 // Show represents a TV show from the database

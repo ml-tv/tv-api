@@ -21,6 +21,11 @@ type Payload struct {
 	OnNetflix     bool     `json:"on_netflix"`
 }
 
+// PayloadList represents a list of TV Show that can be returned to the clients
+type PayloadList struct {
+	Results []*Payload
+}
+
 // NewPayload turn a Show model into a payload
 func NewPayload(m *Show) *Payload {
 	return &Payload{
@@ -38,4 +43,14 @@ func NewPayload(m *Show) *Payload {
 		ExtraLink:     m.ExtraLink,
 		OnNetflix:     m.OnNetflix,
 	}
+}
+
+// NewPayloadList turns a list of Shows into a payload
+func NewPayloadList(list []*Show) *PayloadList {
+	pld := &PayloadList{}
+	pld.Results = make([]*Payload, len(list))
+	for i, show := range list {
+		pld.Results[i] = NewPayload(show)
+	}
+	return pld
 }
