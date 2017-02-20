@@ -9,6 +9,8 @@ func Setup(uri string) error {
 		return err
 	}
 
-	Writer = db
+	// Unsafe returns a version of DB which will silently succeed to scan when
+	// columns in the SQL result have no fields in the destination struct.
+	Writer = db.Unsafe()
 	return nil
 }
