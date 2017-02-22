@@ -34,7 +34,7 @@ type Show struct {
 	TMDbID        int          `db:"tmdb_id"`
 	Status        int          `db:"status"`
 	DayOfWeek     time.Weekday `db:"day_of_week"`
-	ReturningDate *db.Time     `db:"returning_date"`
+	ReturningDate string       `db:"returning_date"`
 	Website       string       `db:"website"`
 	Wikipedia     string       `db:"wikipedia"`
 	ExtraLink     string       `db:"extra_link"`
@@ -78,7 +78,7 @@ func NewFromTMDb(show *tmdb.Show) *Show {
 
 			// check if lastEpisode is the future
 			if lastEpisode.After(time.Now()) {
-				s.ReturningDate = &db.Time{Time: lastEpisode}
+				s.ReturningDate = lastEpisode.String()
 			}
 
 			// If the next episode is in over a week or was more than a week ago,

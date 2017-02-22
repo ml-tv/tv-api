@@ -1,24 +1,21 @@
 package shows
 
-import (
-	"github.com/ml-tv/tv-api/src/core/storage/db"
-)
-
 // Payload represents a TV Show returnable to the clients
 type Payload struct {
-	ID            string   `json:"id"`
-	Name          string   `json:"name"`
-	OriginalName  string   `json:"original_name"`
-	Synopsis      string   `json:"synopsis"`
-	Poster        string   `json:"poster"`
-	Backdrop      string   `json:"backdrop"`
-	TMDbID        int      `json:"tmdb_id"`
-	Status        int      `json:"status"`
-	ReturningDate *db.Time `json:"returning_date,omitempty"`
-	Website       string   `json:"website,omitempty"`
-	Wikipedia     string   `json:"wikipedia"`
-	ExtraLink     string   `json:"extra_link,omitempty"`
-	OnNetflix     bool     `json:"on_netflix"`
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	OriginalName  string `json:"original_name"`
+	Synopsis      string `json:"synopsis"`
+	Poster        string `json:"poster"`
+	Backdrop      string `json:"backdrop"`
+	TMDbID        int    `json:"tmdb_id"`
+	Status        int    `json:"status"`
+	DayOfWeek     int    `json:"day_of_week"`
+	ReturningDate string `json:"returning_date,omitempty"`
+	Website       string `json:"website,omitempty"`
+	Wikipedia     string `json:"wikipedia"`
+	ExtraLink     string `json:"extra_link,omitempty"`
+	OnNetflix     bool   `json:"on_netflix"`
 }
 
 // PayloadList represents a list of TV Show that can be returned to the clients
@@ -36,6 +33,7 @@ func NewPayload(m *Show) *Payload {
 		Poster:        m.PosterURL(),
 		Backdrop:      m.BackdropURL(),
 		TMDbID:        m.TMDbID,
+		DayOfWeek:     int(m.DayOfWeek),
 		Status:        m.Status,
 		ReturningDate: m.ReturningDate,
 		Website:       m.Website,
