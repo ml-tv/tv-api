@@ -273,69 +273,57 @@ func searchTestFullText(t *testing.T) {
 }
 
 func setupSearchData(t *testing.T) {
-	memoryLost := &shows.Show{
+	NewShow(t, &shows.Show{
 		TMDbID:       memoryLostID,
 		Name:         "Memory Lost",
 		OriginalName: "美人为馅",
 		Synopsis:     "A spoiled rich kid lost her identity and her memory after getting kidnapped by a criminal organization. Her boyfriend, who never gave up looking for her, became a police as result. Many years later, a string of criminal activities reunited them, though they did not immediately recognize each other. Although they were now strangers, their complementary skillsets made them formidable partners within a police task force called Black Shield. As they grew closer, her past came back to haunt them.",
 		Status:       shows.ShowStatusFinished,
 		DayOfWeek:    time.Monday,
-	}
-	memoryLost.Save()
-	lifecycle.SaveModels(t, memoryLost)
+	})
 
-	lost := &shows.Show{
+	NewShow(t, &shows.Show{
 		TMDbID:       lostID,
 		Name:         "Lost",
 		OriginalName: "Lost",
 		Synopsis:     "Lost is a drama series containing elements of science fiction and the supernatural that follows the survivors of the crash of a commercial passenger jet flying between Sydney and Los Angeles, on a mysterious tropical island somewhere in the South Pacific Ocean.",
 		Status:       shows.ShowStatusFinished,
 		DayOfWeek:    time.Sunday,
-	}
-	lost.Save()
-	lifecycle.SaveModels(t, lost)
+	})
 
-	lostGirl := &shows.Show{
+	NewShow(t, &shows.Show{
 		TMDbID:       lostGirlID,
 		Name:         "Lost Girl",
 		OriginalName: "Lost Girl",
 		Synopsis:     "Lost Girl focuses on the gorgeous and charismatic Bo, a supernatural being called a succubus who feeds on the energy of humans, sometimes with fatal results. Refusing to embrace her supernatural clan and its rigid hierarchy, Bo is a renegade who takes up the fight for the underdog while searching for the truth about her own mysterious origins.",
 		Status:       shows.ShowStatusFinished,
 		DayOfWeek:    time.Sunday,
-	}
-	lostGirl.Save()
-	lifecycle.SaveModels(t, lostGirl)
+	})
 
-	californication := &shows.Show{
+	NewShow(t, &shows.Show{
 		TMDbID:       californicationID,
 		Name:         "Californication",
 		OriginalName: "Californication",
 		Synopsis:     "A self-loathing, alcoholic writer attempts to repair his damaged relationships with his daughter and her mother while combating sex addiction, a budding drug problem, and the seeming inability to avoid making bad decisions.",
 		Status:       shows.ShowStatusFinished,
 		DayOfWeek:    time.Thursday,
-	}
-	californication.Save()
-	lifecycle.SaveModels(t, californication)
+	})
 
-	batesMotel := &shows.Show{
+	NewShow(t, &shows.Show{
 		TMDbID:       batesMotelID,
 		Name:         "Bates Motel",
 		OriginalName: "Bates Motel",
 		Synopsis:     "A contemporary prequel to the 1960 film Psycho, depicting the life of Norman Bates and his mother Norma prior to the events portrayed in Hitchcock's film, albeit in a different fictional town and in a modern setting.",
 		Status:       shows.ShowStatusPaused,
 		DayOfWeek:    time.Monday,
-	}
-	batesMotel.Save()
-	lifecycle.SaveModels(t, batesMotel)
+	})
 
-	theWalkingDead := &shows.Show{
+	NewShow(t, &shows.Show{
 		TMDbID:       theWalkingDeadID,
 		Name:         "The Walking Dead",
 		OriginalName: "The Walking Dead",
 		Synopsis:     "Sheriff's deputy Rick Grimes awakens from a coma to find a post-apocalyptic world dominated by flesh-eating zombies. He sets out to find his family and encounters many other survivors along the way.",
 		Status:       shows.ShowStatusShowing,
 		DayOfWeek:    time.Sunday,
-	}
-	theWalkingDead.Save()
-	lifecycle.SaveModels(t, theWalkingDead)
+	})
 }

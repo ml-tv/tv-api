@@ -10,12 +10,11 @@ import (
 	"net/http"
 
 	"github.com/ml-tv/tv-api/src/components/shows"
-	"github.com/ml-tv/tv-api/src/components/shows/testdata"
 	"github.com/ml-tv/tv-api/src/core/primitives/models/lifecycle"
 	authdata "github.com/ml-tv/tv-api/src/core/security/auth/testdata"
 )
 
-const theLyingGame = 38207
+const theLyingGameID = 38207
 
 func callAdd(t *testing.T, params *shows.AddParams, auth *httptests.RequestAuth) *httptest.ResponseRecorder {
 	ri := &httptests.RequestInfo{
@@ -33,7 +32,7 @@ func TestAddShowDuplicate(t *testing.T) {
 	admin.Save()
 
 	// Create and save a show
-	s := testdata.NewShow(t, theLyingGame)
+	s := NewShowFromTMDb(t, theLyingGameID)
 
 	// Try to add the same show again
 	params := &shows.AddParams{TMDbID: s.TMDbID}
