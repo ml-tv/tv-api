@@ -30,13 +30,13 @@ var Endpoints = router.Endpoints{
 		Handler: Search,
 		Params:  &SearchParams{},
 	},
-	// EndpointUpdate: {
-	// 	Verb:    "PATCH",
-	// 	Path:    "/medias/shows/{id}",
-	// 	Auth:    router.LoggedUser,
-	// 	Handler: handlers.Update,
-	// 	Params:  &handlers.UpdateParams{},
-	// },
+	EndpointUpdate: {
+		Verb:    "PATCH",
+		Path:    "/shows/{id}",
+		Auth:    router.AdminAccess,
+		Handler: Update,
+		Params:  &UpdateParams{},
+	},
 	// EndpointDelete: {
 	// 	Verb:    "DELETE",
 	// 	Path:    "/medias/shows/{id}",

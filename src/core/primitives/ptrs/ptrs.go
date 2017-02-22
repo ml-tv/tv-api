@@ -19,3 +19,8 @@ func NewWeekday(v time.Weekday) *time.Weekday {
 	i := v
 	return &i
 }
+
+// NewString takes a string and returns a pointer to a new string of the same value
+func NewString(s string) *string {
+	return &s
+}
