@@ -138,3 +138,50 @@ func TestValidUpdate(t *testing.T) {
 		})
 	}
 }
+
+func TestInvalidUpdate(t *testing.T) {
+	defer lifecycle.PurgeModels(t)
+	regUser, regUserSession := authdata.NewAuth(t)
+	admin, adminSession := authdata.NewAuth(t)
+	admin.IsAdmin = true
+	admin.Save()
+
+	testCases := []struct {
+		description string
+		code        int
+		params      *shows.UpdateParams
+		auth        *httptests.RequestAuth
+	}{
+		{
+			"Invalid UUID",
+			http.StatusBadRequest,
+			&shows.UpdateParams{ID: "NotAUUID"},
+			httptests.NewRequestAuth(adminSession.ID, admin.ID),
+		},
+		{
+			"Anonymous user",
+			http.StatusUnauthorized,
+			&shows.UpdateParams{ID: "82ab8ee4-2c6c-4a5f-bbeb-c6df165ff8ab"},
+			nil,
+		},
+		{
+			"Regular user",
+			http.StatusUnauthorized,
+			&shows.UpdateParams{ID: "82ab8ee4-2c6c-4a5f-bbeb-c6df165ff8ab"},
+			httptests.NewRequestAuth(regUserSession.ID, regUser.ID),
+		},
+		{
+			"Unexisting ID",
+			http.StatusNotFound,
+			&shows.UpdateParams{ID: "82ab8ee4-2c6c-4a5f-bbeb-c6df165ff8ab"},
+			httptests.NewRequestAuth(adminSession.ID, admin.ID),
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.description, func(t *testing.T) {
+			rec := callUpdate(t, tc.params, tc.auth)
+			require.Equal(t, tc.code, rec.Code)
+		})
+	}
+}
