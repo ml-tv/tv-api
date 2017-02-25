@@ -93,7 +93,7 @@ func TestValidUpdate(t *testing.T) {
 		},
 		{
 			"Update OnNetflix",
-			&shows.UpdateParams{ID: s.ID, OnNetflix: ptrs.NewBool(true)},
+			&shows.UpdateParams{ID: s.ID, IsOnNetflix: ptrs.NewBool(true)},
 			httptests.NewRequestAuth(adminSession.ID, admin.ID),
 		},
 	}
@@ -132,8 +132,8 @@ func TestValidUpdate(t *testing.T) {
 			if tc.params.ExtraLink != nil {
 				assert.Equal(t, *tc.params.ExtraLink, pld.ExtraLink)
 			}
-			if tc.params.OnNetflix != nil {
-				assert.Equal(t, *tc.params.OnNetflix, pld.OnNetflix)
+			if tc.params.IsOnNetflix != nil {
+				assert.Equal(t, *tc.params.IsOnNetflix, pld.IsOnNetflix)
 			}
 		})
 	}

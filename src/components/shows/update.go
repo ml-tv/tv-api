@@ -23,7 +23,7 @@ type UpdateParams struct {
 	Website       *string `from:"form" json:"website" params:"trim"`
 	Wikipedia     *string `from:"form" json:"wikipedia" params:"trim"`
 	ExtraLink     *string `from:"form" json:"extra_link" params:"trim"`
-	OnNetflix     *bool   `from:"form" json:"on_netflix" params:"trim"`
+	IsOnNetflix   *bool   `from:"form" json:"is_on_netflix" params:"trim"`
 }
 
 // Update is an API handler to
@@ -87,8 +87,8 @@ func Update(req *router.Request) error {
 		show.ExtraLink = extraLink
 	}
 
-	if params.OnNetflix != nil {
-		show.OnNetflix = *params.OnNetflix
+	if params.IsOnNetflix != nil {
+		show.IsOnNetflix = *params.IsOnNetflix
 	}
 
 	if err = show.Save(); err != nil {

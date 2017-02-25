@@ -38,7 +38,7 @@ type Show struct {
 	Website       string       `db:"website"`
 	Wikipedia     string       `db:"wikipedia"`
 	ExtraLink     string       `db:"extra_link"`
-	OnNetflix     bool         `db:"on_netflix"`
+	IsOnNetflix   bool         `db:"is_on_netflix"`
 }
 
 // BackdropURL returns a URL to the backdrop

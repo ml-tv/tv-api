@@ -15,7 +15,7 @@ type Payload struct {
 	Website       string `json:"website,omitempty"`
 	Wikipedia     string `json:"wikipedia"`
 	ExtraLink     string `json:"extra_link,omitempty"`
-	OnNetflix     bool   `json:"on_netflix"`
+	IsOnNetflix   bool   `json:"is_on_netflix"`
 }
 
 // PayloadList represents a list of TV Show that can be returned to the clients
@@ -39,7 +39,7 @@ func NewPayload(m *Show) *Payload {
 		Website:       m.Website,
 		Wikipedia:     m.Wikipedia,
 		ExtraLink:     m.ExtraLink,
-		OnNetflix:     m.OnNetflix,
+		IsOnNetflix:   m.IsOnNetflix,
 	}
 }
 
