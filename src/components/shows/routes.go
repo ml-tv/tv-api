@@ -10,8 +10,8 @@ const (
 	EndpointAdd = iota
 	EndpointSearch
 	EndpointUpdate
+	EndpointGetOne
 	EndpointDelete
-	EndpointGet
 )
 
 // Endpoints is a list of endpoints for this components
@@ -37,19 +37,19 @@ var Endpoints = router.Endpoints{
 		Handler: Update,
 		Params:  &UpdateParams{},
 	},
+	EndpointGetOne: {
+		Verb:    "GET",
+		Path:    "/shows/{id}",
+		Auth:    nil,
+		Handler: GetOne,
+		Params:  &GetOneParams{},
+	},
 	// EndpointDelete: {
 	// 	Verb:    "DELETE",
 	// 	Path:    "/medias/shows/{id}",
 	// 	Auth:    router.LoggedUser,
 	// 	Handler: handlers.Delete,
 	// 	Params:  &handlers.DeleteParams{},
-	// },
-	// EndpointGet: {
-	// 	Verb:    "GET",
-	// 	Path:    "/medias/shows/{id}",
-	// 	Auth:    nil,
-	// 	Handler: handlers.Get,
-	// 	Params:  &handlers.GetParams{},
 	// },
 }
 
