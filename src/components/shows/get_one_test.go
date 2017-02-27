@@ -45,50 +45,53 @@ func TestGetOne(t *testing.T) {
 		PosterPath:   "/1yeVJox3rjo2jBKrrihIMj7uoS9.jpg",
 	})
 
-	testCases := []struct {
-		description string
-		code        int
-		params      *shows.GetOneParams
-		auth        *httptests.RequestAuth
-	}{
-		{
-			"Invalid UUID",
-			http.StatusBadRequest,
-			&shows.GetOneParams{ID: "Invalid"},
-			httptests.NewRequestAuth(regUserSession.ID, regUser.ID),
-		},
-		{
-			"Unexisting UUID",
-			http.StatusNotFound,
-			&shows.GetOneParams{ID: "8cd5a72e-c285-48bc-b03e-d842c453ec4b"},
-			httptests.NewRequestAuth(regUserSession.ID, regUser.ID),
-		},
-		{
-			"Get Breaking Bad",
-			http.StatusOK,
-			&shows.GetOneParams{ID: s.ID},
-			httptests.NewRequestAuth(regUserSession.ID, regUser.ID),
-		},
-	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.description, func(t *testing.T) {
-			rec := callGetOne(t, tc.params, tc.auth)
-			require.Equal(t, tc.code, rec.Code)
+	t.Run("Parallel", func(t *testing.T) {
+		testCases := []struct {
+			description string
+			code        int
+			params      *shows.GetOneParams
+			auth        *httptests.RequestAuth
+		}{
+			{
+				"Invalid UUID",
+				http.StatusBadRequest,
+				&shows.GetOneParams{ID: "Invalid"},
+				httptests.NewRequestAuth(regUserSession.ID, regUser.ID),
+			},
+			{
+				"Unexisting UUID",
+				http.StatusNotFound,
+				&shows.GetOneParams{ID: "8cd5a72e-c285-48bc-b03e-d842c453ec4b"},
+				httptests.NewRequestAuth(regUserSession.ID, regUser.ID),
+			},
+			{
+				"Get Breaking Bad",
+				http.StatusOK,
+				&shows.GetOneParams{ID: s.ID},
+				httptests.NewRequestAuth(regUserSession.ID, regUser.ID),
+			},
+		}
+		for _, tc := range testCases {
+			tc := tc
+			t.Run(tc.description, func(t *testing.T) {
+				t.Parallel()
+				rec := callGetOne(t, tc.params, tc.auth)
+				require.Equal(t, tc.code, rec.Code)
 
-			if tc.code == http.StatusOK {
-				var pld shows.Payload
-				if err := json.NewDecoder(rec.Body).Decode(&pld); err != nil {
-					t.Fatal(err)
+				if tc.code == http.StatusOK {
+					var pld shows.Payload
+					if err := json.NewDecoder(rec.Body).Decode(&pld); err != nil {
+						t.Fatal(err)
+					}
+
+					assert.Equal(t, s.Name, pld.Name)
+					assert.Equal(t, s.OriginalName, pld.Name)
+					assert.Equal(t, s.Synopsis, pld.Synopsis)
+					assert.Equal(t, s.Status, pld.Status)
+					assert.Equal(t, int(s.DayOfWeek), pld.DayOfWeek)
+					assert.Equal(t, s.Website, pld.Website)
 				}
-
-				assert.Equal(t, s.Name, pld.Name)
-				assert.Equal(t, s.OriginalName, pld.Name)
-				assert.Equal(t, s.Synopsis, pld.Synopsis)
-				assert.Equal(t, s.Status, pld.Status)
-				assert.Equal(t, int(s.DayOfWeek), pld.DayOfWeek)
-				assert.Equal(t, s.Website, pld.Website)
-			}
-		})
-	}
+			})
+		}
+	})
 }
