@@ -70,7 +70,10 @@ func (ri *RequestInfo) ParseParams() {
 	if params.Kind() == reflect.Ptr {
 		params = params.Elem()
 	}
+	ri.parseParamsRecursive(params)
+}
 
+func (ri *RequestInfo) parseParamsRecursive(params reflect.Value) {
 	nbParams := params.NumField()
 	for i := 0; i < nbParams; i++ {
 		param := params.Field(i)
@@ -79,6 +82,12 @@ func (ri *RequestInfo) ParseParams() {
 
 		if param.Kind() == reflect.Ptr {
 			param = param.Elem()
+		}
+
+		// Handle embeded struct
+		if param.Kind() == reflect.Struct && paramInfo.Anonymous {
+			ri.parseParamsRecursive(param)
+			continue
 		}
 
 		// We get the Value
@@ -90,6 +99,18 @@ func (ri *RequestInfo) ParseParams() {
 			value = param.String()
 		case reflect.Int:
 			value = strconv.Itoa(int(param.Int()))
+		case reflect.Ptr:
+			if !param.IsNil() {
+				val := param.Elem()
+				switch val.Kind() {
+				case reflect.Bool:
+					value = strconv.FormatBool(val.Bool())
+				case reflect.String:
+					value = param.String()
+				case reflect.Int:
+					value = strconv.Itoa(int(val.Int()))
+				}
+			}
 		}
 
 		// We get the name from the json tag

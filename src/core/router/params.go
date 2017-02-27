@@ -113,6 +113,10 @@ func (r *Request) ParseParams() error {
 		return err
 	}
 
+	return r.parseParamsRecursive(params, sources)
+}
+
+func (r *Request) parseParamsRecursive(params reflect.Value, sources map[string]url.Values) error {
 	nbParams := params.NumField()
 	for i := 0; i < nbParams; i++ {
 		param := params.Field(i)
@@ -122,6 +126,12 @@ func (r *Request) ParseParams() error {
 		// We make sure we can update the value of field
 		if !param.CanSet() {
 			return httperr.NewServerError("field [%s] could not be set", paramInfo.Name)
+		}
+
+		// Handle embeded struct
+		if param.Kind() == reflect.Struct && paramInfo.Anonymous {
+			r.parseParamsRecursive(param, sources)
+			continue
 		}
 
 		// We control the source of the param. If nothing is provided, we take from the URL
