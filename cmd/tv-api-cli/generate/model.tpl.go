@@ -111,8 +111,10 @@ func ({{.ModelVar}} *{{.ModelName}}) doCreate(q db.Queryable) error {
 	}
 
 	{{.ModelVar}}.ID = uuid.NewV4().String()
-	{{.ModelVar}}.CreatedAt = db.Now()
 	{{.ModelVar}}.UpdatedAt = db.Now()
+	if {{.ModelVar}}.CreatedAt == nil {
+		{{.ModelVar}}.CreatedAt = db.Now()
+	}
 
 	stmt := "{{.CreateStmt}}"
 	_, err := q.NamedExec(stmt, {{.ModelVar}})

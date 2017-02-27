@@ -33,7 +33,7 @@ type SearchParams struct {
 
 	// OrderBy represents a list of orders separated by "|"
 	// ex ?order=-name|day_of_week will order by name desc and day of week asc
-	// fields are: name, day_of_week, returning_date
+	// fields are: name, day_of_week, returning_date, created_at
 	OrderBy string `from:"query" json:"order" params:"trim"`
 }
 
@@ -102,7 +102,7 @@ func Search(req *router.Request) error {
 
 	// Set sorting
 	if params.OrderBy != "" {
-		sortableFields := []string{"name", "day_of_week", "returning_date"}
+		sortableFields := []string{"name", "day_of_week", "returning_date", "created_at"}
 		fields := strings.Split(params.OrderBy, "|")
 		for _, f := range fields {
 			f = strings.ToLower(f)
@@ -133,13 +133,14 @@ func Search(req *router.Request) error {
 	if where != "" {
 		where = " WHERE " + where
 	}
-	if orderBy != "" {
-		orderBy = " ORDER BY " + orderBy
+	// We default the ordering by recency
+	if orderBy == "" {
+		orderBy = "created_at DESC"
 	}
 
 	// Exec query and return payload
 	var list []*Show
-	stmt := fmt.Sprintf("SELECT %s FROM %s %s %s LIMIT %d OFFSET %d",
+	stmt := fmt.Sprintf("SELECT %s FROM %s %s ORDER BY %s LIMIT %d OFFSET %d",
 		selct, from, where, orderBy, pagination.Limit(), pagination.Offset())
 
 	// stmt := fmt.Sprintf("SELECT %s FROM %s %s %s", selct, from, where, orderBy)

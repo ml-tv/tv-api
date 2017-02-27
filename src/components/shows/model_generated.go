@@ -92,8 +92,10 @@ func (s *Show) doCreate(q db.Queryable) error {
 	}
 
 	s.ID = uuid.NewV4().String()
-	s.CreatedAt = db.Now()
 	s.UpdatedAt = db.Now()
+	if s.CreatedAt == nil {
+		s.CreatedAt = db.Now()
+	}
 
 	stmt := "INSERT INTO shows (id, created_at, updated_at, deleted_at, name, original_name, synopsis, poster_path, backdrop_path, tmdb_id, status, day_of_week, returning_date, website, wikipedia, extra_link, is_on_netflix) VALUES (:id, :created_at, :updated_at, :deleted_at, :name, :original_name, :synopsis, :poster_path, :backdrop_path, :tmdb_id, :status, :day_of_week, :returning_date, :website, :wikipedia, :extra_link, :is_on_netflix)"
 	_, err := q.NamedExec(stmt, s)

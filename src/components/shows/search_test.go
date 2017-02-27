@@ -7,6 +7,7 @@ import (
 
 	"github.com/ml-tv/tv-api/src/core/network/http/httptests"
 	"github.com/ml-tv/tv-api/src/core/paginator"
+	"github.com/ml-tv/tv-api/src/core/storage/db"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -24,9 +25,9 @@ import (
 )
 
 const (
+	memoryLostID      = 68386
 	lostID            = 4607
 	lostGirlID        = 33852
-	memoryLostID      = 68386
 	californicationID = 1215
 	batesMotelID      = 46786
 	theWalkingDeadID  = 1402
@@ -82,7 +83,7 @@ func searchTestPagination(t *testing.T) {
 			"Default values",
 			6,
 			nil, nil,
-			[]int{memoryLostID, lostID, lostGirlID, californicationID, batesMotelID, theWalkingDeadID},
+			[]int{theWalkingDeadID, batesMotelID, californicationID, lostGirlID, lostID, memoryLostID},
 		},
 		{
 			"Page 2, default results per page",
@@ -94,13 +95,13 @@ func searchTestPagination(t *testing.T) {
 			"Page 1, 5 results per page",
 			5,
 			ptrs.NewInt(1), ptrs.NewInt(5),
-			[]int{memoryLostID, lostID, lostGirlID, californicationID, batesMotelID},
+			[]int{theWalkingDeadID, batesMotelID, californicationID, lostGirlID, lostID},
 		},
 		{
 			"Page 2, 5 results per page",
 			1,
 			ptrs.NewInt(2), ptrs.NewInt(5),
-			[]int{theWalkingDeadID},
+			[]int{memoryLostID},
 		},
 	}
 	for _, tc := range testCases {
@@ -145,7 +146,7 @@ func searchTestFilterStatus(t *testing.T) {
 			"Filter Finished",
 			4,
 			&shows.SearchParams{Status: strconv.Itoa(shows.ShowStatusFinished)},
-			[]int{memoryLostID, lostID, lostGirlID, californicationID},
+			[]int{californicationID, lostGirlID, lostID, memoryLostID},
 		},
 		{
 			"Filter Cancelled",
@@ -157,7 +158,7 @@ func searchTestFilterStatus(t *testing.T) {
 			"Filter Showing|Paused",
 			2,
 			&shows.SearchParams{Status: fmt.Sprintf("%d|%d", shows.ShowStatusShowing, shows.ShowStatusPaused)},
-			[]int{batesMotelID, theWalkingDeadID},
+			[]int{theWalkingDeadID, batesMotelID},
 		},
 	}
 	for _, tc := range testCases {
@@ -192,13 +193,13 @@ func searchTestFilterDayOfWeek(t *testing.T) {
 			"Filter Sunday",
 			3,
 			&shows.SearchParams{DayOfWeek: ptrs.NewInt(int(time.Sunday))},
-			[]int{lostID, lostGirlID, theWalkingDeadID},
+			[]int{theWalkingDeadID, lostGirlID, lostID},
 		},
 		{
 			"Filter Monday",
 			2,
 			&shows.SearchParams{DayOfWeek: ptrs.NewInt(int(time.Monday))},
-			[]int{memoryLostID, batesMotelID},
+			[]int{batesMotelID, memoryLostID},
 		},
 		{
 			"Filter Thursday",
@@ -340,6 +341,7 @@ func setupSearchData(t *testing.T) {
 		Synopsis:     "A spoiled rich kid lost her identity and her memory after getting kidnapped by a criminal organization. Her boyfriend, who never gave up looking for her, became a police as result. Many years later, a string of criminal activities reunited them, though they did not immediately recognize each other. Although they were now strangers, their complementary skillsets made them formidable partners within a police task force called Black Shield. As they grew closer, her past came back to haunt them.",
 		Status:       shows.ShowStatusFinished,
 		DayOfWeek:    time.Monday,
+		CreatedAt:    &db.Time{Time: time.Now()},
 	})
 
 	NewShow(t, &shows.Show{
@@ -349,6 +351,7 @@ func setupSearchData(t *testing.T) {
 		Synopsis:     "Lost is a drama series containing elements of science fiction and the supernatural that follows the survivors of the crash of a commercial passenger jet flying between Sydney and Los Angeles, on a mysterious tropical island somewhere in the South Pacific Ocean.",
 		Status:       shows.ShowStatusFinished,
 		DayOfWeek:    time.Sunday,
+		CreatedAt:    &db.Time{Time: time.Now().Add(10 * time.Second)},
 	})
 
 	NewShow(t, &shows.Show{
@@ -358,6 +361,7 @@ func setupSearchData(t *testing.T) {
 		Synopsis:     "Lost Girl focuses on the gorgeous and charismatic Bo, a supernatural being called a succubus who feeds on the energy of humans, sometimes with fatal results. Refusing to embrace her supernatural clan and its rigid hierarchy, Bo is a renegade who takes up the fight for the underdog while searching for the truth about her own mysterious origins.",
 		Status:       shows.ShowStatusFinished,
 		DayOfWeek:    time.Sunday,
+		CreatedAt:    &db.Time{Time: time.Now().Add(20 * time.Second)},
 	})
 
 	NewShow(t, &shows.Show{
@@ -367,6 +371,7 @@ func setupSearchData(t *testing.T) {
 		Synopsis:     "A self-loathing, alcoholic writer attempts to repair his damaged relationships with his daughter and her mother while combating sex addiction, a budding drug problem, and the seeming inability to avoid making bad decisions.",
 		Status:       shows.ShowStatusFinished,
 		DayOfWeek:    time.Thursday,
+		CreatedAt:    &db.Time{Time: time.Now().Add(30 * time.Second)},
 	})
 
 	NewShow(t, &shows.Show{
@@ -376,6 +381,7 @@ func setupSearchData(t *testing.T) {
 		Synopsis:     "A contemporary prequel to the 1960 film Psycho, depicting the life of Norman Bates and his mother Norma prior to the events portrayed in Hitchcock's film, albeit in a different fictional town and in a modern setting.",
 		Status:       shows.ShowStatusPaused,
 		DayOfWeek:    time.Monday,
+		CreatedAt:    &db.Time{Time: time.Now().Add(40 * time.Second)},
 	})
 
 	NewShow(t, &shows.Show{
@@ -385,5 +391,6 @@ func setupSearchData(t *testing.T) {
 		Synopsis:     "Sheriff's deputy Rick Grimes awakens from a coma to find a post-apocalyptic world dominated by flesh-eating zombies. He sets out to find his family and encounters many other survivors along the way.",
 		Status:       shows.ShowStatusShowing,
 		DayOfWeek:    time.Sunday,
+		CreatedAt:    &db.Time{Time: time.Now().Add(50 * time.Second)},
 	})
 }
