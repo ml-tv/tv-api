@@ -5,6 +5,7 @@ type Payload struct {
 	ID            string `json:"id"`
 	Name          string `json:"name"`
 	OriginalName  string `json:"original_name"`
+	YearReleased  int    `json:"year_released"`
 	Synopsis      string `json:"synopsis"`
 	Poster        string `json:"poster"`
 	Backdrop      string `json:"backdrop"`
@@ -29,6 +30,7 @@ func NewPayload(m *Show) *Payload {
 		ID:            m.ID,
 		Name:          m.Name,
 		OriginalName:  m.OriginalName,
+		YearReleased:  m.YearReleased,
 		Synopsis:      m.Synopsis,
 		Poster:        m.PosterURL(),
 		Backdrop:      m.BackdropURL(),

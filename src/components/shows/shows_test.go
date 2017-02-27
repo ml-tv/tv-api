@@ -21,7 +21,10 @@ func NewShowFromTMDb(t *testing.T, id int) *shows.Show {
 	}
 
 	// Save the show to the database
-	s := shows.NewFromTMDb(show)
+	s, err := shows.NewFromTMDb(show)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := s.Save(); err != nil {
 		t.Fatal(err)
 	}

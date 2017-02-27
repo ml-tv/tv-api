@@ -19,6 +19,8 @@ const (
 	ShowStatusEndOfList
 )
 
+const ShowDateFormat = "January 02 2006"
+
 // Show represents a TV show from the database
 //go:generate tv-api-cli generate model Show -t shows
 type Show struct {
@@ -28,6 +30,7 @@ type Show struct {
 	DeletedAt     *db.Time     `db:"deleted_at"`
 	Name          string       `db:"name"`
 	OriginalName  string       `db:"original_name"`
+	YearReleased  int          `db:"year_released"`
 	Synopsis      string       `db:"synopsis"`
 	PosterPath    string       `db:"poster_path"`
 	BackdropPath  string       `db:"backdrop_path"`
@@ -52,7 +55,7 @@ func (m *Show) PosterURL() string {
 }
 
 // NewFromTMDb turns a TMDb.Show int a Show
-func NewFromTMDb(show *tmdb.Show) *Show {
+func NewFromTMDb(show *tmdb.Show) (*Show, error) {
 	s := &Show{
 		TMDbID:       show.ID,
 		Name:         show.Name,
@@ -63,7 +66,14 @@ func NewFromTMDb(show *tmdb.Show) *Show {
 		Website:      show.Website,
 	}
 
-	// Set the status, the returning date, and the day of the week
+	firstEpisode, err := time.Parse(tmdb.DateFormat, show.FirstAirDate)
+	if err != nil {
+		return nil, err
+	}
+	s.YearReleased = firstEpisode.Year()
+	s.DayOfWeek = firstEpisode.Weekday()
+
+	// Set the status
 	switch show.Status {
 	case tmdb.StatusCanceled:
 		s.Status = ShowStatusCanceled
@@ -71,26 +81,36 @@ func NewFromTMDb(show *tmdb.Show) *Show {
 		s.Status = ShowStatusFinished
 	default:
 		s.Status = ShowStatusShowing
+	}
 
+	// Set the returning date, improve the day of the week and the status
+	if show.LastAirDate != "" {
 		lastEpisode, err := time.Parse(tmdb.DateFormat, show.LastAirDate)
-		if err != nil && !lastEpisode.IsZero() {
+		if err != nil {
+			return nil, err
+		}
+		if !lastEpisode.IsZero() {
+			// it's obviously more accurate to use the last air day for the DayOfWeek
 			s.DayOfWeek = lastEpisode.Weekday()
 
-			// check if lastEpisode is the future
-			if lastEpisode.After(time.Now()) {
-				s.ReturningDate = lastEpisode.String()
-			}
+			// no need to bother checking the ReturningDate if the show has ben stopped
+			if s.Status == ShowStatusShowing {
+				// check if lastEpisode is the future
+				if lastEpisode.After(time.Now()) {
+					s.ReturningDate = lastEpisode.Format(ShowDateFormat)
+				}
 
-			// If the next episode is in over a week or was more than a week ago,
-			// the show is on break
-			oneWeek := time.Duration(7 * 24 * time.Hour)
-			nextWeek := time.Now().Add(oneWeek)
-			lastWeek := time.Now().Add(-oneWeek)
-			if lastEpisode.Before(lastWeek) || lastEpisode.After(nextWeek) {
-				s.Status = ShowStatusPaused
+				// If the next episode is in over a week or was more than a week ago,
+				// the show is on break
+				oneWeek := time.Duration(7 * 24 * time.Hour)
+				nextWeek := time.Now().Add(oneWeek)
+				lastWeek := time.Now().Add(-oneWeek)
+				if lastEpisode.Before(lastWeek) || lastEpisode.After(nextWeek) {
+					s.Status = ShowStatusPaused
+				}
 			}
 		}
 	}
 
-	return s
+	return s, nil
 }

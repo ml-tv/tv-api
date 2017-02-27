@@ -28,7 +28,10 @@ func Add(req *router.Request) error {
 	}
 
 	// Save the show to the database
-	s := NewFromTMDb(show)
+	s, err := NewFromTMDb(show)
+	if err != nil {
+		return err
+	}
 	if err := s.Save(); err != nil {
 		if db.IsDup(err) {
 			return httperr.NewConflict("show already added")

@@ -13,7 +13,7 @@ import (
 
 // JoinShowSQL returns a string ready to be embed in a JOIN query
 func JoinShowSQL(prefix string) string {
-	fields := []string{ "id", "created_at", "updated_at", "deleted_at", "name", "original_name", "synopsis", "poster_path", "backdrop_path", "tmdb_id", "status", "day_of_week", "returning_date", "website", "wikipedia", "extra_link", "is_on_netflix" }
+	fields := []string{ "id", "created_at", "updated_at", "deleted_at", "name", "original_name", "year_released", "synopsis", "poster_path", "backdrop_path", "tmdb_id", "status", "day_of_week", "returning_date", "website", "wikipedia", "extra_link", "is_on_netflix" }
 	output := ""
 
 	for i, field := range fields {
@@ -97,7 +97,7 @@ func (s *Show) doCreate(q db.Queryable) error {
 		s.CreatedAt = db.Now()
 	}
 
-	stmt := "INSERT INTO shows (id, created_at, updated_at, deleted_at, name, original_name, synopsis, poster_path, backdrop_path, tmdb_id, status, day_of_week, returning_date, website, wikipedia, extra_link, is_on_netflix) VALUES (:id, :created_at, :updated_at, :deleted_at, :name, :original_name, :synopsis, :poster_path, :backdrop_path, :tmdb_id, :status, :day_of_week, :returning_date, :website, :wikipedia, :extra_link, :is_on_netflix)"
+	stmt := "INSERT INTO shows (id, created_at, updated_at, deleted_at, name, original_name, year_released, synopsis, poster_path, backdrop_path, tmdb_id, status, day_of_week, returning_date, website, wikipedia, extra_link, is_on_netflix) VALUES (:id, :created_at, :updated_at, :deleted_at, :name, :original_name, :year_released, :synopsis, :poster_path, :backdrop_path, :tmdb_id, :status, :day_of_week, :returning_date, :website, :wikipedia, :extra_link, :is_on_netflix)"
 	_, err := q.NamedExec(stmt, s)
 
   return err
@@ -135,7 +135,7 @@ func (s *Show) doUpdate(q db.Queryable) error {
 
 	s.UpdatedAt = db.Now()
 
-	stmt := "UPDATE shows SET id=:id, created_at=:created_at, updated_at=:updated_at, deleted_at=:deleted_at, name=:name, original_name=:original_name, synopsis=:synopsis, poster_path=:poster_path, backdrop_path=:backdrop_path, tmdb_id=:tmdb_id, status=:status, day_of_week=:day_of_week, returning_date=:returning_date, website=:website, wikipedia=:wikipedia, extra_link=:extra_link, is_on_netflix=:is_on_netflix WHERE id=:id"
+	stmt := "UPDATE shows SET id=:id, created_at=:created_at, updated_at=:updated_at, deleted_at=:deleted_at, name=:name, original_name=:original_name, year_released=:year_released, synopsis=:synopsis, poster_path=:poster_path, backdrop_path=:backdrop_path, tmdb_id=:tmdb_id, status=:status, day_of_week=:day_of_week, returning_date=:returning_date, website=:website, wikipedia=:wikipedia, extra_link=:extra_link, is_on_netflix=:is_on_netflix WHERE id=:id"
 	_, err := q.NamedExec(stmt, s)
 
 	return err

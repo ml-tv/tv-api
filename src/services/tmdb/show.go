@@ -22,6 +22,7 @@ type Show struct {
 	Status       string `json:"status"`
 	Website      string `json:"homepage"`
 	LastAirDate  string `json:"last_air_date"`
+	FirstAirDate string `json:"first_air_date"`
 }
 
 // ShowByID returns a show using an ID
