@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/ml-tv/tv-api/src/core/network/http/httptests"
+	"github.com/ml-tv/tv-api/src/core/paginator"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -51,6 +52,7 @@ func TestSearch(t *testing.T) {
 		t.Run("Filter Day Of Week", searchTestFilterDayOfWeek)
 		t.Run("Order By", searchTestOrderBy)
 		t.Run("Filter Status", searchTestFilterStatus)
+		t.Run("Pagination", searchTestPagination)
 	})
 }
 
@@ -64,6 +66,64 @@ func searchTestNoParams(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, 6, len(pld.Results))
+}
+
+func searchTestPagination(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		description  string
+		totalResults int
+		page         *int
+		perPage      *int
+		orderedID    []int
+	}{
+		{
+			"Default values",
+			6,
+			nil, nil,
+			[]int{memoryLostID, lostID, lostGirlID, californicationID, batesMotelID, theWalkingDeadID},
+		},
+		{
+			"Page 2, default results per page",
+			0,
+			ptrs.NewInt(2), nil,
+			[]int{},
+		},
+		{
+			"Page 1, 5 results per page",
+			5,
+			ptrs.NewInt(1), ptrs.NewInt(5),
+			[]int{memoryLostID, lostID, lostGirlID, californicationID, batesMotelID},
+		},
+		{
+			"Page 2, 5 results per page",
+			1,
+			ptrs.NewInt(2), ptrs.NewInt(5),
+			[]int{theWalkingDeadID},
+		},
+	}
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.description, func(t *testing.T) {
+			t.Parallel()
+
+			pagination := paginator.HandlerParams{Page: tc.page, PerPage: tc.perPage}
+			params := &shows.SearchParams{HandlerParams: pagination}
+
+			rec := callSearch(t, params, nil)
+			require.Equal(t, http.StatusOK, rec.Code)
+
+			var pld shows.PayloadList
+			if err := json.NewDecoder(rec.Body).Decode(&pld); err != nil {
+				t.Fatal(err)
+			}
+			require.Equal(t, tc.totalResults, len(pld.Results))
+			for i, res := range pld.Results {
+				assert.Equal(t, tc.orderedID[i], res.TMDbID)
+			}
+		})
+	}
 }
 
 func searchTestFilterStatus(t *testing.T) {
@@ -111,7 +171,7 @@ func searchTestFilterStatus(t *testing.T) {
 			if err := json.NewDecoder(rec.Body).Decode(&pld); err != nil {
 				t.Fatal(err)
 			}
-			assert.Equal(t, tc.totalResults, len(pld.Results))
+			require.Equal(t, tc.totalResults, len(pld.Results))
 			for i, res := range pld.Results {
 				assert.Equal(t, tc.orderedID[i], res.TMDbID)
 			}
@@ -119,7 +179,7 @@ func searchTestFilterStatus(t *testing.T) {
 	}
 }
 
-func searchTestOrderBy(t *testing.T) {
+func searchTestFilterDayOfWeek(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
@@ -164,7 +224,7 @@ func searchTestOrderBy(t *testing.T) {
 			if err := json.NewDecoder(rec.Body).Decode(&pld); err != nil {
 				t.Fatal(err)
 			}
-			assert.Equal(t, tc.totalResults, len(pld.Results))
+			require.Equal(t, tc.totalResults, len(pld.Results))
 			for i, res := range pld.Results {
 				assert.Equal(t, tc.orderedID[i], res.TMDbID)
 			}
@@ -172,7 +232,7 @@ func searchTestOrderBy(t *testing.T) {
 	}
 }
 
-func searchTestFilterDayOfWeek(t *testing.T) {
+func searchTestOrderBy(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
@@ -211,7 +271,7 @@ func searchTestFilterDayOfWeek(t *testing.T) {
 			if err := json.NewDecoder(rec.Body).Decode(&pld); err != nil {
 				t.Fatal(err)
 			}
-			assert.Equal(t, tc.totalResults, len(pld.Results))
+			require.Equal(t, tc.totalResults, len(pld.Results))
 			for i, res := range pld.Results {
 				assert.Equal(t, tc.orderedID[i], res.TMDbID)
 			}
@@ -264,7 +324,7 @@ func searchTestFullText(t *testing.T) {
 			if err := json.NewDecoder(rec.Body).Decode(&pld); err != nil {
 				t.Fatal(err)
 			}
-			assert.Equal(t, tc.totalResults, len(pld.Results))
+			require.Equal(t, tc.totalResults, len(pld.Results))
 			for i, res := range pld.Results {
 				assert.Equal(t, tc.orderedID[i], res.TMDbID)
 			}

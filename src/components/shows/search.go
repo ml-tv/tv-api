@@ -8,13 +8,19 @@ import (
 	"strconv"
 
 	"github.com/ml-tv/tv-api/src/core/network/http/httperr"
+	"github.com/ml-tv/tv-api/src/core/paginator"
 	"github.com/ml-tv/tv-api/src/core/primitives/slices"
 	"github.com/ml-tv/tv-api/src/core/router"
 	"github.com/ml-tv/tv-api/src/core/storage/db"
 )
 
+// DefaultNbResultsPerPage represents the default number of result per page
+const DefaultNbResultsPerPage = 20
+
 // SearchParams represents the params needed by the Search handler
 type SearchParams struct {
+	paginator.HandlerParams
+
 	// Name represents a string to use to look against the name field
 	Name string `from:"query" json:"name" params:"trim"`
 
@@ -34,6 +40,11 @@ type SearchParams struct {
 // Search is an API handler to search a show
 func Search(req *router.Request) error {
 	params := req.Params.(*SearchParams)
+
+	pagination := params.Paginator(DefaultNbResultsPerPage)
+	if !pagination.IsValid() {
+		return httperr.NewBadRequest("Invalid pagination data")
+	}
 
 	// Set default SQL params
 	selct := "*"
@@ -128,7 +139,10 @@ func Search(req *router.Request) error {
 
 	// Exec query and return payload
 	var list []*Show
-	stmt := fmt.Sprintf("SELECT %s FROM %s %s %s", selct, from, where, orderBy)
+	stmt := fmt.Sprintf("SELECT %s FROM %s %s %s LIMIT %d OFFSET %d",
+		selct, from, where, orderBy, pagination.Limit(), pagination.Offset())
+
+	// stmt := fmt.Sprintf("SELECT %s FROM %s %s %s", selct, from, where, orderBy)
 	if err := db.NamedSelect(&list, stmt, args); err != nil {
 		return err
 	}
