@@ -9,10 +9,10 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/gorilla/mux"
 	"github.com/ml-tv/tv-api/src/core/logger"
 	"github.com/ml-tv/tv-api/src/core/notifiers/mailer"
 	"github.com/ml-tv/tv-api/src/core/security/auth"
-	"github.com/gorilla/mux"
 )
 
 const (
@@ -142,6 +142,7 @@ func (req *Request) handlePanic() {
 		err = fmt.Errorf("panic: %v", err)
 
 		logger.Errorf(`message: "%s", %s`, err.Error(), req)
+		logger.Errorf(string(debug.Stack()))
 
 		// Send an email async
 		if mailer.Emailer != nil {
