@@ -44,13 +44,13 @@ var Endpoints = router.Endpoints{
 		Handler: GetOne,
 		Params:  &GetOneParams{},
 	},
-	// EndpointDelete: {
-	// 	Verb:    "DELETE",
-	// 	Path:    "/medias/shows/{id}",
-	// 	Auth:    router.LoggedUser,
-	// 	Handler: handlers.Delete,
-	// 	Params:  &handlers.DeleteParams{},
-	// },
+	EndpointDelete: {
+		Verb:    "DELETE",
+		Path:    "/shows/{id}",
+		Auth:    router.AdminAccess,
+		Handler: Delete,
+		Params:  &DeleteParams{},
+	},
 }
 
 // SetRoutes is used to set all the routes of the article
