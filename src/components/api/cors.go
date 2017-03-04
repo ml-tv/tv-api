@@ -4,9 +4,9 @@ import "github.com/gorilla/handlers"
 
 // AllowedOrigins is a list containing all origins allowed to hit the API
 var AllowedOrigins = handlers.AllowedOrigins([]string{
-	"http://www.melvin.la",
-	"http://orchid.melvin.la",
-	"http://orchid.melvin.la:3000",
+	"http://tv.melvin.la",        // prod
+	"http://swan.melvin.la",      // staging
+	"http://swan.melvin.la:3000", // local
 })
 
 // AllowedMethods is a list containing all HTTP verb accepted by the API
