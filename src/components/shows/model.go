@@ -54,7 +54,7 @@ func (m *Show) PosterURL() string {
 	return fmt.Sprintf("https://image.tmdb.org/t/p/original/%s", m.PosterPath)
 }
 
-// NewFromTMDb turns a TMDb.Show int a Show
+// NewFromTMDb turns a TMDb.Show into a Show
 func NewFromTMDb(show *tmdb.Show) (*Show, error) {
 	s := &Show{
 		TMDbID:       show.ID,
@@ -113,4 +113,18 @@ func NewFromTMDb(show *tmdb.Show) (*Show, error) {
 	}
 
 	return s, nil
+}
+
+// NewListFromTMDb turns a list of TMDb.Show into a list of Show
+func NewListFromTMDb(shows []*tmdb.Show) ([]*Show, error) {
+	var output = make([]*Show, len(shows))
+
+	for i, show := range shows {
+		s, err := NewFromTMDb(show)
+		if err != nil {
+			return nil, err
+		}
+		output[i] = s
+	}
+	return output, nil
 }

@@ -10,6 +10,11 @@ var (
 	StatusCanceled  = "Canceled"
 )
 
+type ShowList struct {
+	Page    int     `json:"page"`
+	Results []*Show `json:"results"`
+}
+
 // Show represents a TMDb payload representing a TV Show
 type Show struct {
 	ID           int    `json:"id"`
@@ -35,4 +40,16 @@ func ShowByID(id int) (*Show, error) {
 		return nil, err
 	}
 	return &dest, nil
+}
+
+// SearchShows returns a list of shows matching a name
+func SearchShows(name string, page int) ([]*Show, error) {
+	endpoint := fmt.Sprintf("%s/%s/%s", rootURL, "search", "tv")
+
+	var dest ShowList
+	err := Search(endpoint, name, page, &dest)
+	if err != nil {
+		return nil, err
+	}
+	return dest.Results, nil
 }

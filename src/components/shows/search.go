@@ -12,6 +12,7 @@ import (
 	"github.com/ml-tv/tv-api/src/core/primitives/slices"
 	"github.com/ml-tv/tv-api/src/core/router"
 	"github.com/ml-tv/tv-api/src/core/storage/db"
+	"github.com/ml-tv/tv-api/src/services/tmdb"
 )
 
 // DefaultNbResultsPerPage represents the default number of result per page
@@ -20,6 +21,9 @@ const DefaultNbResultsPerPage = 20
 // SearchParams represents the params needed by the Search handler
 type SearchParams struct {
 	paginator.HandlerParams
+
+	// FromProvider will query TMDb instead of the local database
+	FromProvider bool `from:"query" json:"from_provider" default:"false"`
 
 	// Name represents a string to use to look against the name field
 	Name string `from:"query" json:"name" params:"trim"`
@@ -37,9 +41,37 @@ type SearchParams struct {
 	OrderBy string `from:"query" json:"order" params:"trim"`
 }
 
+// searchTMDb is an API handler to search a show on TMDb
+func searchTMDb(req *router.Request, params *SearchParams) error {
+	pagination := params.Paginator(DefaultNbResultsPerPage)
+	if !pagination.IsValid() {
+		return httperr.NewBadRequest("invalid pagination data")
+	}
+	if params.Name == "" {
+		return httperr.NewBadRequest("you need to provide a name")
+	}
+
+	shows, err := tmdb.SearchShows(params.Name, pagination.CurrentPage)
+	if err != nil {
+		return err
+	}
+
+	s, err := NewListFromTMDb(shows)
+	if err != nil {
+		return err
+	}
+
+	req.Ok(NewPayloadList(s))
+	return nil
+}
+
 // Search is an API handler to search a show
 func Search(req *router.Request) error {
 	params := req.Params.(*SearchParams)
+
+	if params.FromProvider {
+		return searchTMDb(req, params)
+	}
 
 	pagination := params.Paginator(DefaultNbResultsPerPage)
 	if !pagination.IsValid() {

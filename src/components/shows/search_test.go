@@ -54,7 +54,29 @@ func TestSearch(t *testing.T) {
 		t.Run("Order By", searchTestOrderBy)
 		t.Run("Filter Status", searchTestFilterStatus)
 		t.Run("Pagination", searchTestPagination)
+		t.Run("TMDb no name", searchTestTMDbNoName)
+		t.Run("TMDb valid", searchTestTMDbValid)
 	})
+}
+
+func searchTestTMDbValid(t *testing.T) {
+	t.Parallel()
+
+	rec := callSearch(t, &shows.SearchParams{FromProvider: true, Name: "Breaking Bad"}, nil)
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var pld shows.PayloadList
+	if err := json.NewDecoder(rec.Body).Decode(&pld); err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1, len(pld.Results))
+}
+
+func searchTestTMDbNoName(t *testing.T) {
+	t.Parallel()
+
+	rec := callSearch(t, &shows.SearchParams{FromProvider: true}, nil)
+	require.Equal(t, http.StatusBadRequest, rec.Code)
 }
 
 func searchTestNoParams(t *testing.T) {
