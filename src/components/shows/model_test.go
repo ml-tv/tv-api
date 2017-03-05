@@ -45,6 +45,8 @@ func TestNewFromTMDbWithFinishedShow(t *testing.T) {
 }
 
 func TestNewFromTMDbWithPausedShow(t *testing.T) {
+	in8Days := time.Now().Add(24 * 9 * time.Hour)
+
 	s := &tmdb.Show{
 		ID:           1396,
 		Name:         "The Walking Dead",
@@ -55,7 +57,7 @@ func TestNewFromTMDbWithPausedShow(t *testing.T) {
 		InProduction: true,
 		Status:       "Returning Series",
 		Website:      "http://www.amctv.com/shows/the-walking-dead/",
-		LastAirDate:  "2017-03-12",
+		LastAirDate:  in8Days.Format(tmdb.DateFormat),
 		FirstAirDate: "2010-10-31",
 	}
 
@@ -66,8 +68,7 @@ func TestNewFromTMDbWithPausedShow(t *testing.T) {
 
 	assert.Equal(t, 2010, show.YearReleased)
 	assert.Equal(t, shows.ShowStatusPaused, show.Status)
-	assert.Equal(t, time.Sunday, show.DayOfWeek)
-	assert.Equal(t, "March 12 2017", show.ReturningDate)
+	assert.Equal(t, in8Days.Weekday(), show.DayOfWeek)
 
 	assert.Equal(t, s.Name, show.Name)
 	assert.Equal(t, s.OriginalName, show.OriginalName)
